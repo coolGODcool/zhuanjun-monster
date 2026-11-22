@@ -1,0 +1,885 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+<title>政戰小怪獸｜專軍背誦</title>
+<style>
+:root{
+  --bg:#f6f1e7;--card:#fffdf8;--ink:#2b2a26;--sub:#7a7468;--line:#e7dfcf;
+  --g:#4f7d4a;--g2:#e5efdc;--o:#e8833a;--o2:#fbe6d4;--r:#c9483b;--r2:#f7dcd8;--b:#3f6b8f;--b2:#dde9f2;--y:#e9b93a;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;background:var(--bg);color:var(--ink);font-family:-apple-system,"PingFang TC","Noto Sans TC","Microsoft JhengHei",sans-serif;font-size:16px}
+body{padding-bottom:76px}
+button{font:inherit;color:inherit;border:0;background:none;cursor:pointer}
+.wrap{max-width:520px;margin:0 auto;padding:12px 14px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:14px;margin-bottom:12px}
+h2{font-size:17px;margin:4px 0 10px}
+.sub{color:var(--sub);font-size:13px}
+.row{display:flex;gap:8px;align-items:center}
+.btn{display:block;width:100%;padding:13px 14px;border-radius:14px;font-weight:700;font-size:16px;text-align:center}
+.btn.pri{background:var(--g);color:#fff}
+.btn.sec{background:var(--g2);color:var(--g)}
+.btn.ghost{background:transparent;border:1.5px solid var(--line)}
+.btn:active{transform:scale(.98)}
+.chip{display:inline-block;padding:5px 11px;border-radius:99px;background:#efe8da;font-size:13px;margin:0 6px 6px 0}
+.chip.on{background:var(--g);color:#fff}
+/* nav */
+nav{position:fixed;left:0;right:0;bottom:0;background:var(--card);border-top:1px solid var(--line);display:flex;justify-content:center;padding-bottom:env(safe-area-inset-bottom);z-index:20}
+nav button{flex:1;max-width:110px;padding:9px 0 10px;font-size:11px;color:var(--sub);display:flex;flex-direction:column;align-items:center;gap:2px}
+nav button b{font-size:21px;line-height:1}
+nav button.on{color:var(--g);font-weight:700}
+/* pet */
+.pet{position:relative;text-align:center;padding:6px 0 0}
+.pet svg{width:190px;height:190px;animation:bob 2.6s ease-in-out infinite}
+.pet.happy svg{animation:hop 1.2s ease-in-out infinite}
+@keyframes bob{50%{transform:translateY(-6px)}}
+@keyframes hop{0%,100%{transform:translateY(0)}40%{transform:translateY(-14px) scale(1.03,.97)}}
+.blink{animation:blink 4s infinite;transform-origin:center;transform-box:fill-box}
+@keyframes blink{0%,94%,100%{transform:scaleY(1)}97%{transform:scaleY(.1)}}
+.bubble{display:inline-block;background:#fff;border:1.5px solid var(--line);border-radius:14px;padding:7px 12px;font-size:14px;margin-top:2px;max-width:90%}
+.petname{font-size:20px;font-weight:800;margin-top:6px}
+.bar{height:12px;border-radius:99px;background:#ece4d3;overflow:hidden}
+.bar i{display:block;height:100%;background:linear-gradient(90deg,var(--y),var(--o));border-radius:99px;transition:width .5s}
+.bar.g i{background:linear-gradient(90deg,#8cc07f,var(--g))}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:12px}
+.stat{background:#f4eee2;border-radius:12px;padding:8px;text-align:center}
+.stat b{display:block;font-size:20px}
+.stat span{font-size:12px;color:var(--sub)}
+.mission{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px dashed var(--line);font-size:15px}
+.mission:last-child{border:0}
+.mission .ck{width:24px;height:24px;border-radius:50%;border:2px solid var(--line);display:grid;place-items:center;font-size:14px;flex:none}
+.mission.done .ck{background:var(--g);border-color:var(--g);color:#fff}
+.mission.done span{color:var(--sub);text-decoration:line-through}
+/* study */
+.top{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+.top .bar{flex:1}
+.x{font-size:22px;padding:4px 8px}
+.tag{font-size:12px;color:var(--sub)}
+.q{font-size:19px;font-weight:700;line-height:1.55;margin:6px 0 2px}
+.ans{white-space:pre-wrap;line-height:1.8;font-size:17px;background:#f7f2e7;border-radius:12px;padding:12px;margin-top:10px}
+.hint{background:var(--o2);border-radius:12px;padding:10px 12px;font-size:14px;line-height:1.65;margin-top:10px}
+.hint b{color:var(--o)}
+.grade{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:12px}
+.grade button{padding:12px 4px;border-radius:14px;font-weight:700;font-size:15px}
+.gb{background:var(--r2);color:var(--r)}.gm{background:#f8eccb;color:#9a6c08}.gg{background:var(--g2);color:var(--g)}
+.modebadge{display:inline-block;font-size:12px;padding:3px 9px;border-radius:99px;background:var(--b2);color:var(--b);font-weight:700}
+.slots{min-height:64px;background:#f7f2e7;border-radius:12px;padding:10px;line-height:2.1;font-size:17px;margin-top:10px;white-space:pre-wrap}
+.slots .ok{color:var(--g)}
+.tiles{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+.tile{background:#fff;border:1.5px solid var(--line);border-radius:12px;padding:9px 11px;font-size:16px;box-shadow:0 2px 0 var(--line)}
+.tile.used{visibility:hidden}
+.tile.bad{animation:shake .35s;border-color:var(--r);background:var(--r2)}
+@keyframes shake{25%{transform:translateX(-5px)}75%{transform:translateX(5px)}}
+textarea{width:100%;min-height:150px;border:1.5px solid var(--line);border-radius:12px;padding:12px;font:inherit;font-size:17px;line-height:1.7;background:#fff;resize:vertical}
+.diff{white-space:pre-wrap;line-height:1.9;font-size:17px;background:#f7f2e7;border-radius:12px;padding:12px;margin-top:10px}
+.diff .miss{background:var(--r2);color:var(--r);text-decoration:underline;font-weight:700}
+.diff .extra{color:var(--r);text-decoration:line-through;opacity:.75}
+.score{font-size:28px;font-weight:800;text-align:center;margin-top:8px}
+.xpfloat{position:fixed;left:50%;top:40%;transform:translateX(-50%);font-size:28px;font-weight:900;color:var(--o);pointer-events:none;animation:up 1s forwards;z-index:50}
+@keyframes up{to{transform:translate(-50%,-80px);opacity:0}}
+/* list */
+.search{width:100%;padding:11px 13px;border-radius:12px;border:1.5px solid var(--line);font:inherit;background:#fff;margin-bottom:10px}
+.qi{border-bottom:1px solid var(--line);padding:11px 2px}
+.qi:last-child{border:0}
+.qi .qq{display:flex;gap:8px;font-size:15px;line-height:1.5}
+.dot{width:10px;height:10px;border-radius:50%;flex:none;margin-top:6px;background:#ddd}
+.qi .aa{white-space:pre-wrap;font-size:15px;line-height:1.75;margin:8px 0 0 18px;color:#403c33}
+.skill{display:flex;gap:12px;align-items:center;padding:9px 0;border-bottom:1px dashed var(--line)}
+.skill:last-child{border:0}
+.skill .ic{font-size:26px;width:44px;height:44px;border-radius:12px;display:grid;place-items:center;background:#eee6d6;filter:grayscale(1);opacity:.5;flex:none}
+.skill.on .ic{filter:none;opacity:1;background:var(--o2)}
+.skill .bd{flex:1}
+.week{display:flex;align-items:flex-end;gap:6px;height:110px;margin-top:8px}
+.week div{flex:1;text-align:center;font-size:11px;color:var(--sub)}
+.week i{display:block;background:var(--g);border-radius:6px 6px 0 0;margin-bottom:4px;min-height:2px}
+.modal{position:fixed;inset:0;background:rgba(40,35,25,.55);display:none;align-items:center;justify-content:center;z-index:60;padding:20px}
+.modal.on{display:flex}
+.modal .card{max-width:420px;width:100%;text-align:center}
+.confetti{position:fixed;top:-10px;width:9px;height:14px;z-index:70;animation:fall 1.8s linear forwards}
+@keyframes fall{to{transform:translateY(105vh) rotate(540deg)}}
+label.set{display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px dashed var(--line);font-size:15px}
+select,input[type=text]{font:inherit;padding:6px 8px;border-radius:9px;border:1.5px solid var(--line);background:#fff}
+.hide{display:none!important}
+.small{font-size:13px}
+.edtag{display:inline-block;font-size:11px;padding:2px 7px;border-radius:99px;background:#dde9f2;color:#3f6b8f;font-weight:700;margin-left:6px}
+.editlink{display:block;text-align:center;font-size:13px;color:var(--b);text-decoration:underline;margin:6px 0 12px}
+.modal .card.left{text-align:left}
+.modal textarea{min-height:90px;font-size:15px}
+.code{font-size:40px;font-weight:900;letter-spacing:8px;text-align:center;color:var(--o)}
+.pl{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px dashed var(--line)}
+.pl:last-child{border:0}
+.pl .av{width:36px;height:36px;border-radius:50%;display:grid;place-items:center;color:#fff;font-weight:900;font-size:13px;flex:none;border:2px solid #2b2a26}
+.pl .nm{flex:1;font-size:15px}
+.pl .sc{font-weight:900;font-size:17px}
+.pl .pb{height:6px;border-radius:9px;background:#ece4d3;margin-top:4px;overflow:hidden}
+.pl .pb i{display:block;height:100%;background:var(--o)}
+.big{font-size:64px;text-align:center;font-weight:900;color:var(--o)}
+input.codein{font-size:28px;letter-spacing:6px;text-align:center;width:100%;padding:10px;border-radius:12px;border:2px solid var(--line)}
+
+.dg{background:#fff;border:1.5px solid var(--line);border-radius:14px;padding:12px;margin-top:10px}
+.dg h4{margin:0 0 10px;font-size:14px;color:var(--b)}
+.fl{display:flex;flex-direction:column;align-items:stretch;gap:4px}
+.fl.h{flex-direction:row;flex-wrap:wrap;align-items:center}
+.fl .nd{background:var(--b2);border-radius:10px;padding:8px 10px;font-size:14px;line-height:1.4;text-align:center}
+.fl.h .nd{flex:1;min-width:64px;padding:8px 6px}
+.fl .nd small{display:block;color:var(--sub);font-size:12px}
+.fl .ar{text-align:center;color:var(--sub);font-size:14px}
+.py{display:flex;flex-direction:column;align-items:center;gap:4px}
+.py div{background:linear-gradient(#f3d27a,#e9b93a);border-radius:8px;padding:7px 6px;text-align:center;font-size:14px;font-weight:700}
+.py small{display:block;font-weight:400;font-size:12px;color:#5b4a1a}
+.tr .rt{background:var(--g);color:#fff;border-radius:10px;padding:8px;text-align:center;font-weight:700;font-size:14px}
+.tr .kd{border-left:3px solid var(--g2);margin:6px 0 0 14px;padding-left:10px}
+.tr .kd b{display:block;font-size:14px;margin-top:6px}
+.tr .kd span{display:inline-block;background:var(--g2);color:var(--g);border-radius:8px;padding:3px 8px;font-size:13px;margin:4px 4px 0 0}
+.gd{display:grid;grid-template-columns:repeat(auto-fill,minmax(92px,1fr));gap:8px}
+.gd div{background:var(--b2);border-radius:12px;padding:8px;text-align:center;font-size:14px}
+.gd div i{display:block;font-style:normal;font-size:24px}
+.gd small{display:block;color:var(--b);font-weight:700}
+table.tb{width:100%;border-collapse:collapse;font-size:13px}
+table.tb th{background:var(--b2);color:var(--b);text-align:left;padding:6px}
+table.tb td{border-bottom:1px solid var(--line);padding:6px;vertical-align:top;line-height:1.5}
+.sc div{display:flex;gap:8px;align-items:center;font-size:14px;margin-bottom:4px}
+.sc i{width:64px;flex:none;color:#fff;font-style:normal;font-weight:700;text-align:center;border-radius:8px;padding:6px 0}
+.pal{background:#efe6f7;border-radius:14px;padding:12px;margin-top:10px}
+.pal h4{margin:0 0 8px;font-size:14px;color:#6b4c8f}
+.stop{display:flex;gap:10px;align-items:flex-start;font-size:14px;line-height:1.55;margin-bottom:7px}
+.stop i{font-style:normal;width:30px;height:30px;flex:none;border-radius:50%;background:#fff;display:grid;place-items:center;font-size:16px}
+.route{font-size:12px;color:#6b4c8f;line-height:1.8}
+.strip{display:flex;gap:10px;overflow-x:auto;scroll-snap-type:x mandatory;padding:2px 2px 8px;-webkit-overflow-scrolling:touch}
+.panel{flex:0 0 86%;scroll-snap-align:center;background:#fff;border:3px solid #2b2a26;border-radius:6px;overflow:hidden;box-shadow:3px 3px 0 #2b2a26}
+.panel svg{display:block;width:100%;height:auto}
+.panel .cap{border-top:3px solid #2b2a26;padding:8px 10px;font-size:14px;line-height:1.5;background:#fffbe9}
+.panel .cap b{color:#c9483b}
+.panel .qbar{background:#2b2a26;color:#fff;font-size:12.5px;line-height:1.45;padding:6px 10px}
+.cover{display:flex;flex-direction:column;justify-content:center;background:#e8833a;color:#fff;padding:16px;min-height:300px}
+.cover .t{font-size:13px;opacity:.9}
+.cover .qq{font-size:20px;font-weight:900;line-height:1.5;margin:10px 0;text-shadow:2px 2px 0 #2b2a26}
+.cover .n{font-size:13px;background:#2b2a26;border-radius:99px;padding:4px 10px;align-self:flex-start}
+
+.sim{background:#fff4e0;border:2px solid #f0c27a;border-radius:14px;padding:12px;margin-top:10px}
+.sim h4{margin:0 0 6px;font-size:14px;color:#a8630c}
+.sim .nt{font-size:14px;line-height:1.7;background:#fff;border-radius:10px;padding:8px 10px;margin-bottom:8px}
+.sim .it{border-top:1px dashed #f0c27a;padding:8px 0;font-size:14px;line-height:1.6}
+.sim .it.me{background:#fffaf0}
+.sim .it .sq{font-weight:700}
+.sim .it .aa{white-space:pre-wrap;color:#403c33;margin-top:3px}
+.sim mark{background:#ffd98a;border-radius:4px;padding:0 2px}
+.simtag{display:inline-block;font-size:11px;padding:2px 7px;border-radius:99px;background:#ffd98a;color:#7a4a05;font-weight:700;margin-left:6px}
+
+.swipe{font-size:12px;color:#6b4c8f;text-align:center}
+.pal .tg{font-size:12px;color:#6b4c8f;text-decoration:underline;margin-left:6px}
+
+
+</style>
+</head>
+<body>
+<script>
+/* ====== 把 Firebase 設定貼在這裡 ====== */
+const FIREBASE_CONFIG = {apiKey:"AIzaSyAxRlxXWCj9KX5pjmzG6nfeFxI9FMqqBQ0",authDomain:"zhuanjun-monster.firebaseapp.com",databaseURL:"https://zhuanjun-monster-default-rtdb.asia-southeast1.firebasedatabase.app",projectId:"zhuanjun-monster",storageBucket:"zhuanjun-monster.firebasestorage.app",messagingSenderId:"903573317461",appId:"1:903573317461:web:82fa67166d55019ed771dc"};
+/* ==================================== */
+window.__fbReady=new Promise(r=>{window.__fbResolve=r;setTimeout(()=>r(null),12000)});
+window.claude={use:(n)=>window.__fbReady.then(fb=>fb?(fb[n]||null):null)};
+</script>
+<script type="module">
+const cfg=FIREBASE_CONFIG;
+if(!cfg||!cfg.apiKey||cfg.apiKey==='PASTE_HERE'||!cfg.databaseURL){window.__fbResolve(null)}else{
+try{
+const A=await import('https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js');
+const R=await import('https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js');
+const app=A.initializeApp(cfg);const D=R.getDatabase(app);
+let PID=null;try{PID=localStorage.getItem('zj-pid')}catch(e){}
+if(!PID){PID='p'+Math.random().toString(36).slice(2,10);try{localStorage.setItem('zj-pid',PID)}catch(e){}}
+const TAB=PID+'-'+Math.random().toString(36).slice(2,6);
+const db={collection:(p)=>{
+  if(p==='edits')return{
+    onSnapshot:(f,err)=>R.onValue(R.ref(D,'edits'),s=>{const v=s.val()||{};f({docs:Object.entries(v).map(([id,d])=>({id,exists:true,data:()=>d}))})},err),
+    doc:(id)=>({set:(d)=>R.set(R.ref(D,'edits/'+id),d),delete:()=>R.remove(R.ref(D,'edits/'+id))})};
+  return{onSnapshot:()=>()=>{},doc:()=>({get:async()=>({exists:false,data:()=>undefined}),set:async()=>{}})};
+}};
+const user={id:async()=>PID,profiles:async()=>({}),me:async()=>({name:''})};
+const room={join:async(name)=>{
+  const base='rooms/'+name+'/players',myRef=R.ref(D,base+'/'+TAB);let mine={},cache={};const fns=[];
+  R.onDisconnect(myRef).remove();
+  const unsub=R.onValue(R.ref(D,base),s=>{cache=s.val()||{};fns.forEach(f=>{try{f({})}catch(e){}})});
+  return{name,
+    presence:async(p)=>{for(const k in p){if(p[k]===null)delete mine[k];else mine[k]=p[k]}await R.set(myRef,mine)},
+    peers:()=>Object.entries(cache).map(([k,v])=>({peer:k,by:k,isMe:k===TAB,sameTab:k===TAB,kind:'viewer',guest:false,presence:v||{},updatedAt:0})),
+    onPeers:(f)=>{fns.push(f);setTimeout(()=>f({}),0);return()=>{}},
+    leave:async()=>{unsub();await R.remove(myRef)},connected:()=>true};
+}};
+window.__fbResolve({db,user,room});
+}catch(e){console.error(e);window.__fbResolve(null)}}
+</script>
+<div class="wrap" id="app"></div>
+<nav id="nav">
+  <button data-t="home" class="on"><b>🏠</b>小怪獸</button>
+  <button data-t="study"><b>📚</b>練習</button>
+  <button data-t="bank"><b>📖</b>題庫</button>
+  <button data-t="battle"><b>⚔️</b>對戰</button>
+  <button data-t="dex"><b>🏅</b>技能</button>
+  <button data-t="set"><b>⚙️</b>設定</button>
+</nav>
+<div class="modal" id="modal"><div class="card" id="modalBody"></div></div>
+
+<script>
+const DATA = [{"id": "e1-0", "exam": 1, "ch": "中共對臺統戰戰略", "n": "第一題", "q": "中共傳統以來對臺統戰政策內容內涵與特色主要為何？", "a": "1、底線清晰、彈性務實。\n2、軟硬兼施、分而治之。\n3、採取「五化」策略。"}, {"id": "e1-1", "exam": 1, "ch": "中共對臺統戰戰略", "n": "第二題", "q": "中共對臺政策中「採取五化策略」內容為何？", "a": "孤立化、邊緣化、碎裂化、空洞化、區域化。"}, {"id": "e1-2", "exam": 1, "ch": "中共對臺統戰戰略", "n": "第三題", "q": "中共參照馬克思主義的理論指導：無產階級政黨在一定歷史條件下，為了反對主要敵人，同其他革命階級、革命政黨和團體，以及一切可能團結的力量結成的聯盟，進行何種名詞定義？", "a": "統一戰線。"}, {"id": "e1-3", "exam": 1, "ch": "中共對臺統戰戰略", "n": "第四題", "q": "中共統戰常用的方法為何？", "a": "聯合次要敵人，打擊主要敵人。"}, {"id": "e1-4", "exam": 1, "ch": "中共對臺統戰戰略", "n": "第五題", "q": "中共統戰策略的基本原則有哪些？", "a": "1、利用敵人內部矛盾的原則。\n2、既聯合又鬥爭的原則。\n3、獨立自主的原則。\n4、爭取領導權的原則。"}, {"id": "e1-5", "exam": 1, "ch": "中共對臺統戰戰略", "n": "第六題", "q": "中共統戰策略的基本作法有哪些？", "a": "1、滲透與偽裝。\n2、宣傳與鼓動。\n3、分化與聯合。\n4、威脅與利誘。"}, {"id": "e1-6", "exam": 1, "ch": "中共對臺統戰戰略", "n": "第七題", "q": "中共統戰策略之本質為何？", "a": "1、欺騙性。\n2、鬥爭性。\n3、極權性。\n4、特殊性。"}, {"id": "e1-7", "exam": 1, "ch": "中共對臺統戰戰略", "n": "第八題", "q": "當前中共的對臺政策，在一個中國原則下，以哪兩種（和戰）手段進行做為其策略？", "a": "1、以武力為後盾。\n2、以和平統一、一國兩制為包裝。"}, {"id": "e1-8", "exam": 1, "ch": "中共對臺統戰戰略", "n": "第九題", "q": "中共對臺策略，在胡錦濤的主導之下依循其提出「新胡四點」為主軸，內容為何？", "a": "1、主動出擊。\n2、區隔對待。\n3、軟硬兼施。\n4、入島入心。"}, {"id": "e1-9", "exam": 1, "ch": "中共對臺統戰戰略", "n": "第十題", "q": "習近平的新對臺政策，歸納起來，將以「全方位、制度化」為主軸，有哪五大方向？", "a": "1、由經入政。\n2、兩岸區域合作。\n3、文化溶臺論。\n4、建立全領域簽署網絡。\n5、建立「共一民」接觸管道。"}, {"id": "e1-10", "exam": 1, "ch": "中共對臺統戰戰略", "n": "第十一題", "q": "中共對臺外交統戰有哪些政策？", "a": "1、堅持所謂「一中政策」。\n2、以美制臺。\n3、阻擾我參與國際組織。"}, {"id": "e1-11", "exam": 1, "ch": "中共對臺統戰戰略", "n": "第十二題", "q": "面對中共對臺統戰，我們應有的反制作為為何？", "a": "1、認清中共對臺統戰策略。\n2、落實全民國防教育。\n3、強化敵情教育。\n4、增進國軍戰力，打造國際化優質勁旅。"}, {"id": "e1-12", "exam": 1, "ch": "中共對臺統戰戰略", "n": "第十三題", "q": "當前中共對臺統戰戰略之分析，內容為何？", "a": "1、一個中國原則。\n2、和平統一、一國兩制。\n3、不放棄對臺使用武力。"}, {"id": "e1-13", "exam": 1, "ch": "中共對臺統戰戰略", "n": "第十四題", "q": "面對當前中共統戰，我軍應有的反制作為，其中「認清中共對臺統戰策略」可細分為何？", "a": "1、制定國家總體「反三戰」戰略。\n2、展開全軍反三戰論壇。\n3、加強國際文宣力道凸顯「中國威脅」事實。\n4、剖析「軟的更軟、硬的更硬」策略。"}, {"id": "e1-14", "exam": 1, "ch": "中共對臺統戰戰略", "n": "第十五題", "q": "面對當前中共統戰，我軍應有的反制作為，其中「落實全民國防教育」可細分為何？", "a": "1、深化國民「全民防衛」意識。\n2、建立「全民參與」的國防。"}, {"id": "e1-15", "exam": 1, "ch": "中共對臺統戰戰略", "n": "第十六題", "q": "面對當前中共統戰，我軍應有的反制作為，其中「強化敵情教育」可細分為何？", "a": "1、「中共崛起」。\n2、「軍事情勢」。\n3、「潛在危機」。"}, {"id": "e1-16", "exam": 1, "ch": "中共對臺統戰戰略", "n": "第十七題", "q": "當前中共三戰作為為何？", "a": "1、法律戰。\n2、輿論戰。\n3、心理戰。"}, {"id": "e1-17", "exam": 1, "ch": "中共對臺統戰戰略", "n": "第十八題", "q": "面對當前中共統戰，我軍應有的反制作為，其中「增進國軍戰力，打造國際化優質勁旅」可細分為何？", "a": "1、建立「小而精、小而強、小而巧」的現代化部隊。\n2、增進軟實力，強化政戰功能。"}, {"id": "e1-18", "exam": 1, "ch": "中共對臺統戰戰略", "n": "第十九題", "q": "中共認為，當前最有可能危及臺灣主權問題有內、外兩個因素，其中內部因素為何？", "a": "主要來自臺灣的臺獨勢力。"}, {"id": "e1-19", "exam": 1, "ch": "中共對臺統戰戰略", "n": "第二十題", "q": "中共認為，當前最有可能危及臺灣主權問題有內、外兩個因素，其中外部因素為何？", "a": "主要來自美國對臺灣問題之直接或間接的介入。"}, {"id": "e1-a1", "exam": 1, "ch": "中共對臺統戰戰略", "n": "應用題第一題", "q": "本週首先由電視教學製播兩岸專題座談會，談論中共對臺統戰策略的基本原則等相關內容，請言簡意賅地摘要其基本原則及為何？", "a": "1、聯合次要敵人，打擊主要敵人。\n2、中共對臺統戰策略的基本原則：\n（1）利用敵人內部矛盾的原則。\n（2）既聯合又鬥爭的原則。\n（3）獨立自主的原則。\n（4）爭取領導權的原則。"}, {"id": "e1-a2", "exam": 1, "ch": "中共對臺統戰戰略", "n": "應用題第二題", "q": "承上題，從節目內容可知當前中共的對臺政策，在一個中國原則下，以哪兩種（和戰）手段進行破為其策略？而面臨中共對我的統戰作為，我們應有的反制作為為何？", "a": "1、（1）以武力為後盾。\n（2）以和平統一與一國兩制為包裝。\n2、反制作為如下：\n（1）認清中共對臺統戰策略。\n（2）落實全民國防教育。\n（3）強化敵情教育。\n（4）增進國軍戰力，打造國際化優質勁旅。"}, {"id": "e1-20", "exam": 1, "ch": "民事福利服務暨軍眷服務", "n": "第一題", "q": "民事、服務與福利工作是實現全民國防最重要的作為之一，其目標為何？", "a": "1、對內：服務官兵，凝聚部隊向心，增強部隊戰力。\n2、對外：爭取民眾支持，建立共信共識，塑建國軍優質形象，進而達到全民國防。"}, {"id": "e1-21", "exam": 1, "ch": "民事福利服務暨軍眷服務", "n": "第二題", "q": "民事、服務與福利工作執行時必須確立哪些工作態度，並應秉持哪些精神？", "a": "1、確立以「誠意為先，服務為樂」的工作態度。\n2、秉持「愛心」與「耐心」的精神。"}, {"id": "e1-22", "exam": 1, "ch": "民事福利服務暨軍眷服務", "n": "第三題", "q": "「民事協調會報」有哪些重點工作？", "a": "1、做好官兵服務。\n2、落實福利工作。\n3、強化軍民關係。\n4、整合地區資源。"}, {"id": "e1-23", "exam": 1, "ch": "民事福利服務暨軍眷服務", "n": "第四題", "q": "國軍「愛民敬軍」按舉主題為何？", "a": "1、如何建立軍民良好關係。\n2、如何強化軍民糾紛協處。\n3、如何做好敦親睦鄰工作。"}, {"id": "e1-24", "exam": 1, "ch": "民事福利服務暨軍眷服務", "n": "第五題", "q": "敦親睦鄰工作以透過哪些方式，建立深厚情誼？", "a": "拜訪、聯誼、協調支援及災害救助等方式。"}, {"id": "e1-25", "exam": 1, "ch": "民事福利服務暨軍眷服務", "n": "第六題", "q": "民事、服務與福利工作之對象包括哪些？", "a": "官兵、眷（徵）屬、軍眷眷、一般社會大眾。"}, {"id": "e1-26", "exam": 1, "ch": "民事福利服務暨軍眷服務", "n": "第七題", "q": "基層營、連級如何建立良好軍民關係？", "a": "做好官兵照顧及眷屬服務為主，以爭取廣大軍眷向心。"}, {"id": "e1-27", "exam": 1, "ch": "民事福利服務暨軍眷服務", "n": "第八題", "q": "發生官兵傷亡事件，應如何處置？", "a": "應於第一時間主動慰問協處，分別協請地區留守業務處辦理傷亡撫卹，及申請國軍軍家屬扶助基金會、縣市政府辦理傷亡慰問。"}, {"id": "e1-28", "exam": 1, "ch": "民事福利服務暨軍眷服務", "n": "第九題", "q": "基層營、連級官兵辦理結婚，應如何處置？", "a": "主管應親自參加，如另有要務無法親自前往，除指派幹部代表參加，並盡全力協助辦理婚事。"}, {"id": "e1-29", "exam": 1, "ch": "民事福利服務暨軍眷服務", "n": "第十題", "q": "國軍官兵眷（徵）屬服務，其項目為何？", "a": "1、聯繫巡迴訪問。\n2、徵屬連線服務。\n3、個案協調輔導。\n4、軍人團體意外保險代收服務。"}, {"id": "e1-30", "exam": 1, "ch": "民事福利服務暨軍眷服務", "n": "第十一題", "q": "外島地區眷屬官兵眷屬探訪活動，其實施方式與時間為何？", "a": "1、定期方式：以國定例假日為主。\n2、臨機方式：配合婚喪喜慶及三節慰問等。"}, {"id": "e1-31", "exam": 1, "ch": "民事福利服務暨軍眷服務", "n": "第十二題", "q": "國軍各級協助民間各項活動時，應依據何項規定？", "a": "依據「國軍支援社會活動兵力派遣暨責任分作業規定」。"}, {"id": "e1-32", "exam": 1, "ch": "民事福利服務暨軍眷服務", "n": "第十三題", "q": "民事協調會報之召開權責區分為何？", "a": "綜合協調單位、責任分區單位、民事執行單位。"}, {"id": "e1-33", "exam": 1, "ch": "民事福利服務暨軍眷服務", "n": "第十四題", "q": "民事服務工作之執行要領為何？", "a": "1、做好官兵服務。\n2、落實福利工作。\n3、強化軍民關係。\n4、整合地區資源。"}, {"id": "e1-34", "exam": 1, "ch": "民事福利服務暨軍眷服務", "n": "第十五題", "q": "服務工作之原則為何？", "a": "熱忱、主動、深入、耐煩。"}, {"id": "e1-35", "exam": 1, "ch": "民事福利服務暨軍眷服務", "n": "第十六題", "q": "「國軍基層優秀官兵旅遊」之薦報原則為何？", "a": "以連、營級軍官5%、士官35%、士兵60%之原則薦報，並以支領地域加給及危險勤務加給之外（離）島、高山、偏遠地區官兵為優先薦報對象。"}, {"id": "e1-36", "exam": 1, "ch": "民事福利服務暨軍眷服務", "n": "第十七題", "q": "重要民事聯繫對象可區分為哪幾類？", "a": "1、政府機關。\n2、民代仕紳。\n3、民間團體。\n4、傳播媒體。"}, {"id": "e1-37", "exam": 1, "ch": "民事福利服務暨軍眷服務", "n": "第十八題", "q": "軍民關係的工作範圍包含哪些？", "a": "1、敦親睦鄰工作。\n2、支援社會活動。\n3、軍民糾紛調處。\n4、民事協調會報。\n5、策動敬軍勞軍。"}, {"id": "e1-38", "exam": 1, "ch": "民事福利服務暨軍眷服務", "n": "第十九題", "q": "「行動福利站」支援申請作業，救災部隊如何提出申請？", "a": "由軍團級（含比照）依需求函政治作戰局申請，福利事業管理處依令開設。"}, {"id": "e1-39", "exam": 1, "ch": "民事福利服務暨軍眷服務", "n": "第二十題", "q": "「行動福利站」支援申請作業，演訓、營區開放隸及偏遠單位（地區）巡迴服務如何提出申請？", "a": "由各聯兵旅級（含比照）具函申請，於活動實施前1個月函福利事業管理處。"}, {"id": "e1-b1", "exam": 1, "ch": "民事福利服務暨軍眷服務", "n": "應用題第一題", "q": "近期單位中士○○○家屬因病過世，連長指示輔導長全力協助該員處理後續事宜。請問針對單位在官兵服務工作上包含哪些項目？另基層營、連級官兵眷屬家庭狀況，遇有傷病急難情形，其具體作法為何？", "a": "1、官兵服務工作項目：\n（1）官兵緊急傷亡慰問。\n（2）各級懇親聯誼活動。\n（3）基層優秀官兵旅遊。\n（4）常備戰士家屬服務。\n2、具體作法：\n（1）主動協調奉籍所在地留守業務中心（處）及軍人服務站辦理慰助。\n（2）眷屬遭逢重大變故，除協助官兵返家協處外，並應透過各縣（市）社會局、慈善機構、辦理慰問及協助申辦紓困優惠貸款。"}, {"id": "e1-b2", "exam": 1, "ch": "民事福利服務暨軍眷服務", "n": "應用題第二題", "q": "近期因豪雨肆虐，○旅奉命前往災區進行救災工作，貴官為政綜科政戰士，奉政戰主任指示，為激勵救災官兵士氣、凝聚單位向心，故須申請「行動福利站」支援開設，請問「行動福利站」支援申請作業，救災部隊如何提出申請？另旅部於救災任務結束後，將辦理營區開放，請問「行動福利站」支援申請作業，如何提出申請？", "a": "1、由軍團級（含比照）依需求函政治作戰局申請，福利事業管理處依令開設。\n2、由各聯兵旅級（含比照）具函申請，於活動實施前1個月函福利事業管理處。"}, {"id": "e1-40", "exam": 1, "ch": "保防安全", "n": "第一題", "q": "國軍保防安全五大核心工作為何？", "a": "1、保防教育。\n2、機密維護。\n3、安全調查。\n4、情蒐工作。\n5、專案偵防。"}, {"id": "e1-41", "exam": 1, "ch": "保防安全", "n": "第二題", "q": "國軍保防教育區分哪六項？", "a": "1、新兵教育。\n2、部隊教育。\n3、學校教育。\n4、退離（職）人員教育。\n5、眷屬教育。\n6、後備軍人教育。"}, {"id": "e1-42", "exam": 1, "ch": "保防安全", "n": "第三題", "q": "「安全考核鑑定」實施對象區分哪4大類？", "a": "「機敏單位」、「正平工作」、「榮典部隊」及「啟新工作」對象等4類。"}, {"id": "e1-43", "exam": 1, "ch": "保防安全", "n": "第四題", "q": "國軍人員安全調查工作中，「正平工作」適用範圍與對象為何？", "a": "1、國軍飛行單位。\n2、國軍艦艇單位。\n3、國軍戰甲車單位。\n4、各類少人操作高性能武器。\n5、各類飛彈部隊。\n6、外島地區。"}, {"id": "e1-44", "exam": 1, "ch": "保防安全", "n": "第五題", "q": "試述正義專案提到對於嚴禁於營內與大陸地區人民及香港、澳門地區居民接觸聯繫規範如何？", "a": "1、國軍人員嚴禁於營內使用任何私人或公務用之通（資）訊設備與大陸地區人民及香港、澳門地區居民接觸聯繫。\n2、因婚姻關係與配偶聯繫，仍需遵從第一款規範之要求，並禁止私自引介、夾帶大陸地區人民及香港、澳門地區居民入營。\n3、駐外代表團（軍協組）人員，嚴禁於辦公場域使用私人或公務通（資）訊設備與大陸地區人民及香港、澳門地區居民接觸聯繫，並禁止引介、夾帶前述人員進入辦公場域。"}, {"id": "e1-45", "exam": 1, "ch": "保防安全", "n": "第六題", "q": "國軍保防工作中之「狀況掌握」目的為何？", "a": "在掌握事件發生之初的各種跡象與徵候，俾達到先知快報的要求，以期對事件的有效防制與消弭。"}, {"id": "e1-46", "exam": 1, "ch": "保防安全", "n": "第七題", "q": "狀況掌握的兩個重要觀念為何？", "a": "「先知」及「快報」。"}, {"id": "e1-47", "exam": 1, "ch": "保防安全", "n": "第八題", "q": "安全狀況掌握反映與處理要領中「重大安全狀況」及「一般安全狀況」報部處理時間為何？", "a": "重大安全狀況自單位獲悉案況起「20分鐘」內，反映本部完成初步回報，並於「30分鐘」內詳實補充續報；一般安全狀況自單位獲悉案況起「180分鐘」內將情況逐級反映至本部；若發現媒體於現場採訪，則均應立即回報。"}, {"id": "e1-48", "exam": 1, "ch": "保防安全", "n": "第九題", "q": "安全狀況掌握反映內容應簡明及要件齊全，敘述要項應包含哪些項目？", "a": "包含：「何人（單位）於何時在何地、為何原因發生何事，現況如何、單位處置、人員（家屬）反應為何」等，並附記人員基本資料。"}, {"id": "e1-49", "exam": 1, "ch": "保防安全", "n": "第十題", "q": "為有效掌握安全狀況、落實反情搜網絡，各單位應如何作為？", "a": "明確劃分「安全責任區域」，並輔以時程規劃結合安全防護措施，實施定期演練。"}, {"id": "e1-50", "exam": 1, "ch": "保防安全", "n": "第十一題", "q": "複影印機管制規定中，針對複印機密資訊有何限制？", "a": "除「絕對機密」不得複製外，餘「極機密」級（含）以下之機密資訊，經原產製單位授權或許可後，始准複（影）印；但複製物應視同原件，依其機密等級、屬性分別採適切之管制及保護措施。"}, {"id": "e1-51", "exam": 1, "ch": "保防安全", "n": "第十二題", "q": "保密督導官運用設置由誰擔任？", "a": "由各級單位副主官（管），負責單位保密工作之監督、執行與協調。"}, {"id": "e1-52", "exam": 1, "ch": "保防安全", "n": "第十三題", "q": "簡述保密工作之基本手段？", "a": "限制、禁止、防護、滅跡。"}, {"id": "e1-53", "exam": 1, "ch": "保防安全", "n": "第十四題", "q": "「機密等級」區分為哪幾種？", "a": "「絕對機密」、「極機密」、「機密」、「密」等4種。"}, {"id": "e1-54", "exam": 1, "ch": "保防安全", "n": "第十五題", "q": "「機密屬性」區分為哪幾種？", "a": "「國家機密」、「軍事機密」、「國防秘密」、「國家機密亦屬軍事機密」、「國家機密亦屬國防秘密」及「一般公務機密」。"}, {"id": "e1-55", "exam": 1, "ch": "保防安全", "n": "第十六題", "q": "基層單位保防工作應深切體認做好保防教育的重要性其目標為何？", "a": "人人保密，人人防諜。"}, {"id": "e1-56", "exam": 1, "ch": "保防安全", "n": "第十七題", "q": "基層單位保防工作教育對象？", "a": "國軍現職人員（含各級官士兵、文職、聘僱人員及所屬軍事院校教職員與學員生）、眷屬及後備軍人。"}, {"id": "e1-57", "exam": 1, "ch": "保防安全", "n": "第十八題", "q": "國軍保防教育之實施方式區分幾大類？", "a": "基本教育與輔助教育。"}, {"id": "e1-58", "exam": 1, "ch": "保防安全", "n": "第十九題", "q": "保防教育針對敵人慣常對我施展之陰謀手段，以何為重點教育主軸？", "a": "反滲透、反情搜、反破壞、反顛覆。"}, {"id": "e1-59", "exam": 1, "ch": "保防安全", "n": "第二十題", "q": "保防教育軍事教育之一環，在國軍安全工作上，擔負著何種任務？", "a": "防患於未然、弭禍於無形。"}, {"id": "e1-c1", "exam": 1, "ch": "保防安全", "n": "應用題第一題", "q": "空軍○聯隊○中隊戰情通報：近期共諜案件頻繁，手段日趨多元，且各家媒體爭相報導於○年○月○日，破獲陸生共諜案乙情，因而通令要求所屬各單位落實人員清查，確實遵守相關保密規定要求；另某日晚間你發現單位一兵王小凡，在營內中山室以手機使用wechat（微信）軟體與居住在香港的妻子聯繫，妻子表示想看看丈夫的工作環境，詢問是否可辦理眷客入營。\n問題：\n1、上述王員可能違反了何項「專案規定」？\n2、該專案規定提到對於嚴禁於營內與大陸地區人民及香港、澳門地區居民接觸聯繫規範，前兩項內容為何？", "a": "1、正義專案。\n2、（1）國軍人員嚴禁於營內使用任何私人或公務用之通（資）訊設備與大陸地區人民及香港、澳門地區居民接觸聯繫。\n（2）因婚姻關係與配偶聯繫，仍需遵從第一款規範之要求，並禁止私自引介、夾帶大陸地區人民及香港、澳門地區居民入營。"}, {"id": "e1-c2", "exam": 1, "ch": "保防安全", "n": "應用題第二題", "q": "近期連上余三業務負責人下士王正生多次離開連隊辦公室時，相關作戰訓練資料未依規定存管於保密櫃中，且內容包括單位駐地訓練期程文件。貴官為該連輔導長，為導正單位作業紀律（做法），應於全連集合時轉再宣導國軍保密規定及機密資訊之存管作為。若日後看到下士王正生執行安全士官勤務交接時，將通信情況表攜至營隊辦公室實施複印，複印完後即轉交給下班安全士官，一份個人留存。\n問題：\n1、「機密等級」區分為哪4種？\n2、王員此舉已違反複影印機使用規定，請說明規定中，針對複印機密資訊有何限制？", "a": "1、「絕對機密」、「極機密」、「機密」、「密」等4種。\n2、除「絕對機密」不得複製外，餘「極機密」級（含）以下之機密資訊，經原產製單位授權或許可後，始准複（影）印；但複製物應視同原件，依其機密等級、屬性分別採適切之管制及保護措施。"}, {"id": "e1-60", "exam": 1, "ch": "軍事新聞", "n": "第一題", "q": "青年日報社發行之軍中報刊「一報」為何？", "a": "一報：青年日報。"}, {"id": "e1-61", "exam": 1, "ch": "軍事新聞", "n": "第二題", "q": "青年日報社發行之軍中報刊「兩刊」為何？", "a": "兩刊：吾愛吾家、奮鬥月刊。"}, {"id": "e1-62", "exam": 1, "ch": "軍事新聞", "n": "第三題", "q": "國軍軍種報陸軍刊物為何？", "a": "陸軍忠誠報。"}, {"id": "e1-63", "exam": 1, "ch": "軍事新聞", "n": "第四題", "q": "國軍軍種報海軍刊物為何？", "a": "海軍忠義報。"}, {"id": "e1-64", "exam": 1, "ch": "軍事新聞", "n": "第五題", "q": "國軍軍種報空軍刊物為何？", "a": "空軍忠勇報。"}, {"id": "e1-65", "exam": 1, "ch": "軍事新聞", "n": "第六題", "q": "國軍軍種報憲兵刊物為何？", "a": "憲兵忠貞報。"}, {"id": "e1-66", "exam": 1, "ch": "軍事新聞", "n": "第七題", "q": "國軍軍種報後備指揮部刊物為何？", "a": "後備忠愛報。"}, {"id": "e1-67", "exam": 1, "ch": "軍事新聞", "n": "第八題", "q": "國軍軍種報資通電軍刊物為何？", "a": "資通電軍忠信報。"}, {"id": "e1-68", "exam": 1, "ch": "軍事新聞", "n": "第九題", "q": "青年日報社的使命為何？", "a": "為貫徹執行國軍文宣政策，負責國防文宣工作，達成確保國家安全的使命。"}, {"id": "e1-69", "exam": 1, "ch": "軍事新聞", "n": "第十題", "q": "青年日報社的主要任務為何？", "a": "1、建立官兵正確認知。\n2、維護國家利益。\n3、善盡社會責任。\n4、提供大眾與官兵所需資訊。\n5、提高戰鬥意志。\n6、培養無形戰力。"}, {"id": "e1-70", "exam": 1, "ch": "軍事新聞", "n": "第十一題", "q": "民間報刊投稿之指導原則及作用為何？", "a": "應掌握時效撰文，以積極、主動及提升能見度為指導原則，以求發揮引導輿論的作用。"}, {"id": "e1-71", "exam": 1, "ch": "軍事新聞", "n": "第十二題", "q": "投稿議題依新聞、輿論屬性或政策宣導等內容區分哪三類？", "a": "第一類為政府政策；第二類為國防事務；第三類為兩岸關係。"}, {"id": "e1-72", "exam": 1, "ch": "軍事新聞", "n": "第十三題", "q": "政府政策投稿議題包含哪些？", "a": "凡涉及外交、政治、經濟、心理、社會等重大新聞事件或議題者均屬之。"}, {"id": "e1-73", "exam": 1, "ch": "軍事新聞", "n": "第十四題", "q": "國防事務投稿議題包含哪些？", "a": "凡涉及國軍軍事、戰（演）訓任務、國際軍事或各項國防重要政策等相關事項者均屬之。"}, {"id": "e1-74", "exam": 1, "ch": "軍事新聞", "n": "第十五題", "q": "兩岸關係投稿議題包含哪些？", "a": "凡中共對我統戰、威脅及製訂定涉臺之重大政策、法令等相關新聞均屬之。"}, {"id": "e1-75", "exam": 1, "ch": "軍事新聞", "n": "第十六題", "q": "青年日報社發行之「軍事春秋」現為多久發行一次的刊物？", "a": "雙月刊。"}, {"id": "e1-76", "exam": 1, "ch": "軍事新聞", "n": "第十七題", "q": "國防部發言人臉書為增開與軍民溝通、說明管道其原則為何？", "a": "軟性訴求、多元素材、即時發布。"}, {"id": "e1-77", "exam": 1, "ch": "軍事新聞", "n": "第十八題", "q": "青年日報新聞稿寫作要領其重點為何？", "a": "1、必須帶出文章的主旨。\n2、通順不拗口。\n3、不說教。\n4、對人、事、物感動後的顯露。\n5、感同身受。"}, {"id": "e1-78", "exam": 1, "ch": "軍事新聞", "n": "第十九題", "q": "青年日報新聞稿寫作要領其要領為何？", "a": "1、如何篩選新聞寫作題材。\n2、如何凸顯新聞寫作重點。\n3、如何強化新聞寫作可讀性。"}, {"id": "e1-79", "exam": 1, "ch": "軍事新聞", "n": "第二十題", "q": "青年日報新聞稿寫作常見錯誤種類為何？", "a": "新聞報導、專訪、特稿、側寫、花絮。"}, {"id": "e1-d1", "exam": 1, "ch": "軍事新聞", "n": "應用題第一題", "q": "青年日報社為負責國防文宣工作的政戰專業單位，請試述青年日報社的使命與主要任務為何？", "a": "青年日報社的使命為貫徹執行國軍文宣政策，負責國防文宣工作，達成確保國家安全的使命。主要任務在建立官兵正確認知、維護國家利益、善盡社會責任、提供大眾與官兵所需資訊、提高戰鬥意志及培養無形戰力。"}, {"id": "e1-d2", "exam": 1, "ch": "軍事新聞", "n": "應用題第二題", "q": "小青在研讀軍事新聞相關準則時讀到投稿議題依新聞、輿論屬性或政策宣導等內容區分為3類，但不清楚具體內容，請協助小青瞭解政府政策、國防事務及兩岸關係等3類投稿議題分別包含哪些。", "a": "政府政策：凡涉及外交、政治、經濟、心理、社會等重大新聞事件或議題者均屬之。\n國防事務：凡涉及國軍軍事、戰（演）訓任務、國際軍事或各項國防重要政策等相關事項者均屬之。\n兩岸關係：凡中共對我統戰、威脅及製訂定涉臺之重大政策、法令等相關新聞均屬之。"}];
+const TIPS = {"e1-0": "底軟五", "e1-1": "孤邊碎空區", "e1-2": "反主敵、結聯盟", "e1-3": "聯次打主", "e1-4": "矛聯獨領", "e1-5": "滲宣分威", "e1-6": "欺鬥極特", "e1-7": "武後盾、和包裝", "e1-8": "主區軟入", "e1-9": "經區文網民", "e1-10": "一中、美制、國組", "e1-11": "認落強增", "e1-12": "一中、和兩制、不棄武", "e1-13": "制展加剖", "e1-14": "深建", "e1-15": "崛勢危", "e1-16": "法輿心", "e1-17": "小精強巧、軟硬兼修", "e1-18": "內臺獨", "e1-19": "外美介", "e1-a1": "聯次打主＋矛聯獨領", "e1-a2": "武和兩手＋認落強增", "e1-20": "內服凝戰、外爭塑防", "e1-21": "誠服、愛耐", "e1-22": "官福軍資", "e1-23": "關係、糾紛、敦親", "e1-24": "拜聯協救", "e1-25": "官眷軍民", "e1-26": "照官服眷", "e1-27": "慰問、撫卹、基金、政府", "e1-28": "親到、派代、協助", "e1-29": "聯徵個保", "e1-30": "定例、臨婚喪節", "e1-31": "支援活動依規", "e1-32": "綜責執", "e1-33": "官福軍資", "e1-34": "熱主深耐", "e1-35": "軍五士三五兵六零", "e1-36": "政民團媒", "e1-37": "敦支糾協敬", "e1-38": "軍團函政戰局", "e1-39": "旅級函福利處、提前一月", "e1-b1": "官緊、懇親、旅遊、家服；協留守、社慈貸", "e1-b2": "救災軍團、開放旅級一月", "e1-40": "保機安情專", "e1-41": "新部學退眷後", "e1-42": "機正榮啟", "e1-43": "飛艦甲少彈外", "e1-44": "營內禁聯、婚配仍禁、駐外同禁", "e1-45": "早掌握、先知快報", "e1-46": "先知快報", "e1-47": "重大二十初、三十續；一般一八零；媒體即報", "e1-48": "人時地因事況處反＋資料", "e1-49": "責任區、時程、演練", "e1-50": "絕禁複、極以下須授權、複本同原", "e1-51": "副主官管", "e1-52": "限禁防滅", "e1-53": "絕極機密", "e1-54": "國軍國防雙屬公務", "e1-55": "人人保密、人人防諜", "e1-56": "現職眷後", "e1-57": "基本輔助", "e1-58": "滲情破顛", "e1-59": "未然、無形", "e1-c1": "正義專案；營內禁聯、配偶亦遵", "e1-c2": "絕極機密；絕禁複、其餘授權", "e1-60": "一報青日", "e1-61": "吾家奮鬥", "e1-62": "陸忠誠", "e1-63": "海忠義", "e1-64": "空忠勇", "e1-65": "憲忠貞", "e1-66": "後忠愛", "e1-67": "資忠信", "e1-68": "貫政策、負文宣、保國安", "e1-69": "認利責資志戰", "e1-70": "時效積主能見、引輿論", "e1-71": "政國兩", "e1-72": "外政經心社", "e1-73": "軍演國政", "e1-74": "統威涉臺", "e1-75": "雙月", "e1-76": "軟多即", "e1-77": "主通不說感感", "e1-78": "篩材、凸重、強讀", "e1-79": "報專特側花", "e1-d1": "使命三段＋任務六項", "e1-d2": "政外政經心社、國軍演國政、兩統威涉臺"};
+const PALACE = {"e1-1": ["大門口一隻「孤」狼被隔離在柵欄外（孤立化）", "衛哨亭被擠到地圖「邊」邊（邊緣化）", "集合場的國旗被撕「碎」（碎裂化）", "中山室的電視被挖「空」只剩外殼（空洞化）", "寢室被畫成一小塊一小塊「區」域（區域化）"], "e1-4": ["大門口兩個敵人互相吵架，你在旁邊「利用矛盾」偷笑", "衛哨一手握手、一手揮拳：「既聯合又鬥爭」", "集合場有人自己站一排不跟別人：「獨立自主」", "中山室大家搶麥克風：「爭取領導權」"], "e1-5": ["大門口有人披著迷彩「滲透偽裝」溜進來", "衛哨亭貼滿標語、拿大聲公「宣傳鼓動」", "集合場隊伍被切成兩半又黏回去：「分化與聯合」", "中山室一手拿刀一手拿紅包：「威脅與利誘」"], "e1-6": ["大門口有人變魔術「欺騙」你", "衛哨亭兩個人在打架「鬥爭」", "集合場一個人獨裁發號施令「極權」", "中山室角落戴墨鏡的「特務」"], "e1-8": ["大門口敵人主動衝出來「主動出擊」", "衛哨用拒馬把人分兩邊「區隔對待」", "集合場一手棉花糖一手磚頭「軟硬兼施」", "坐船登島、鑽進你的心臟「入島入心」"], "e1-9": ["大門口一台運鈔車開進來變成政府大樓「由經入政」", "衛哨亭兩岸地圖拼在一起「區域合作」", "集合場在跳中國舞把臺灣融化「文化溶臺」", "中山室桌上一大疊簽約文件「全領域簽署網絡」", "寢室有條熱線電話直通民眾「共一民接觸管道」"], "e1-11": ["大門口拿放大鏡「認清」統戰", "衛哨亭貼「全民國防」海報「落實教育」", "集合場播敵軍影片「強化敵情教育」", "中山室健身房練肌肉「增進國軍戰力、國際化勁旅」"], "e1-13": ["大門口掛「反三戰戰略」大布條", "衛哨亭開「反三戰論壇」", "集合場大螢幕播「中國威脅」國際新聞", "中山室解剖一顆又軟又硬的糖「剖析軟的更軟、硬的更硬」"], "e1-22": ["大門口幫官兵提行李「官兵服務」", "衛哨亭發福利社點券「福利工作」", "集合場跟鄰居阿伯握手「軍民關係」", "中山室把地方資源拼成一張地圖「整合地區資源」"], "e1-29": ["大門口開車「巡迴訪問」", "衛哨亭電話線連到徵屬家「徵屬連線」", "集合場一對一聊天「個案協調輔導」", "中山室收一疊保險單「意外保險代收」"], "e1-34": ["大門口一團火「熱忱」", "衛哨主動敬禮「主動」", "集合場挖地洞「深入」", "中山室有人排隊很久還在笑「耐煩」"], "e1-36": ["大門口站著縣長「政府機關」", "衛哨亭來了議員、仕紳「民代仕紳」", "集合場一群社團阿姨「民間團體」", "中山室架著攝影機「傳播媒體」"], "e1-37": ["大門口跟鄰居送水果「敦親睦鄰」", "衛哨亭派兵去幫廟會「支援社會活動」", "集合場兩個人吵架你當裁判「軍民糾紛調處」", "中山室開會「民事協調會報」", "寢室民眾送來勞軍便當「策動敬軍勞軍」"], "e1-40": ["大門口在上課「保防教育」", "衛哨把信封鎖進保險箱「機密維護」", "集合場拿放大鏡查身分「安全調查」", "中山室有人在偷聽收集情報「情蒐工作」", "寢室特別小組在偵辦案件「專案偵防」"], "e1-41": ["大門口剛入伍的「新兵」", "衛哨亭整個「部隊」在上課", "集合場變成「學校」教室", "中山室退伍學長拿著退伍令「退離人員」", "寢室家人來會客「眷屬」", "餐廳後備軍人穿便服吃飯「後備軍人」"], "e1-43": ["大門口停著一架飛機「飛行單位」", "衛哨亭旁是一艘軍艦「艦艇」", "集合場開進戰車、甲車「戰甲車」", "中山室一個人操控超酷雷射砲「少人操作高性能武器」", "寢室床底下藏一枚飛彈「飛彈部隊」", "餐廳窗外是海上小島「外島」"], "e1-52": ["大門口限高桿「限制」", "衛哨亭「禁止」進入標誌", "集合場築起防護牆「防護」", "中山室碎紙機把文件「滅跡」"], "e1-58": ["大門口抓「滲透」的人", "衛哨亭破解「情報」", "集合場拆除炸彈「反破壞」", "中山室扶起被推倒的政府「反顛覆」"], "e1-69": ["大門口戴眼鏡看清真相「正確認知」", "衛哨抱著國旗「國家利益」", "集合場打掃社區「社會責任」", "中山室發報紙給大家「所需資訊」", "寢室吃大力丸「戰鬥意志」", "餐廳練看不見的內功「無形戰力」"], "e1-77": ["大門口一支大旗寫「主旨」", "衛哨唸稿一口氣不打結「通順不繞口」", "集合場有人想說教被摀嘴「不說教」", "中山室看感人影片聯想到家人「感動後的聯想」", "寢室抱著同袍一起哭「感同身受」"], "e1-79": ["大門口在播「新聞報導」", "衛哨亭被麥克風「專訪」", "集合場貼出「特稿」", "中山室偷拍側臉「側寫」", "寢室散落好多小「花絮」"]};
+const DIAG = {"e1-53": {"type": "pyramid", "title": "機密等級（上面最高）", "items": [{"t": "絕對機密", "s": "不得複製"}, {"t": "極機密"}, {"t": "機密"}, {"t": "密"}]}, "e1-50": {"type": "pyramid", "title": "機密等級（上面最高）", "items": [{"t": "絕對機密", "s": "不得複製"}, {"t": "極機密"}, {"t": "機密"}, {"t": "密"}]}, "e1-47": {"type": "timeline", "title": "安全狀況回報時限", "rows": [{"t": "重大", "marks": [{"m": 20, "l": "20分 初步回報"}, {"m": 30, "l": "30分 補充續報"}]}, {"t": "一般", "marks": [{"m": 180, "l": "180分 逐級反映"}]}], "note": "媒體在現場 → 一律立即回報"}, "e1-11": {"type": "tree", "title": "反制作為 4 大項＋各自細分（第十二、十四、十五、十六、十八題）", "root": "我軍反制作為", "kids": [{"t": "認清中共對臺統戰策略（制展加剖）", "sub": ["反三戰戰略", "反三戰論壇", "凸顯中國威脅", "剖析軟更軟硬更硬"]}, {"t": "落實全民國防教育（深建）", "sub": ["全民防衛意識", "全民參與的國防"]}, {"t": "強化敵情教育（崛勢危）", "sub": ["中共崛起", "軍事情勢", "潛在危機"]}, {"t": "增進國軍戰力（小精強巧、軟硬兼修）", "sub": ["小而精強巧", "軟實力・強化政戰功能"]}]}, "e1-13": {"type": "tree", "title": "反制作為 4 大項＋各自細分（第十二、十四、十五、十六、十八題）", "root": "我軍反制作為", "kids": [{"t": "認清中共對臺統戰策略（制展加剖）", "sub": ["反三戰戰略", "反三戰論壇", "凸顯中國威脅", "剖析軟更軟硬更硬"]}, {"t": "落實全民國防教育（深建）", "sub": ["全民防衛意識", "全民參與的國防"]}, {"t": "強化敵情教育（崛勢危）", "sub": ["中共崛起", "軍事情勢", "潛在危機"]}, {"t": "增進國軍戰力（小精強巧、軟硬兼修）", "sub": ["小而精強巧", "軟實力・強化政戰功能"]}]}, "e1-14": {"type": "tree", "title": "反制作為 4 大項＋各自細分（第十二、十四、十五、十六、十八題）", "root": "我軍反制作為", "kids": [{"t": "認清中共對臺統戰策略（制展加剖）", "sub": ["反三戰戰略", "反三戰論壇", "凸顯中國威脅", "剖析軟更軟硬更硬"]}, {"t": "落實全民國防教育（深建）", "sub": ["全民防衛意識", "全民參與的國防"]}, {"t": "強化敵情教育（崛勢危）", "sub": ["中共崛起", "軍事情勢", "潛在危機"]}, {"t": "增進國軍戰力（小精強巧、軟硬兼修）", "sub": ["小而精強巧", "軟實力・強化政戰功能"]}]}, "e1-15": {"type": "tree", "title": "反制作為 4 大項＋各自細分（第十二、十四、十五、十六、十八題）", "root": "我軍反制作為", "kids": [{"t": "認清中共對臺統戰策略（制展加剖）", "sub": ["反三戰戰略", "反三戰論壇", "凸顯中國威脅", "剖析軟更軟硬更硬"]}, {"t": "落實全民國防教育（深建）", "sub": ["全民防衛意識", "全民參與的國防"]}, {"t": "強化敵情教育（崛勢危）", "sub": ["中共崛起", "軍事情勢", "潛在危機"]}, {"t": "增進國軍戰力（小精強巧、軟硬兼修）", "sub": ["小而精強巧", "軟實力・強化政戰功能"]}]}, "e1-17": {"type": "tree", "title": "反制作為 4 大項＋各自細分（第十二、十四、十五、十六、十八題）", "root": "我軍反制作為", "kids": [{"t": "認清中共對臺統戰策略（制展加剖）", "sub": ["反三戰戰略", "反三戰論壇", "凸顯中國威脅", "剖析軟更軟硬更硬"]}, {"t": "落實全民國防教育（深建）", "sub": ["全民防衛意識", "全民參與的國防"]}, {"t": "強化敵情教育（崛勢危）", "sub": ["中共崛起", "軍事情勢", "潛在危機"]}, {"t": "增進國軍戰力（小精強巧、軟硬兼修）", "sub": ["小而精強巧", "軟實力・強化政戰功能"]}]}, "e1-0": {"type": "table", "title": "中共對臺政策大對照", "head": ["題目", "點數", "記憶口訣"], "rows": [["第一題 傳統內涵特色", "3", "底軟五"], ["第八題 和戰兩手", "2", "武後盾、和包裝"], ["第九題 新胡四點", "4", "主區軟入"], ["第十題 習近平五大方向", "5", "經區文網民"], ["第十三題 統戰戰略之分析", "3", "一中、和兩制、不棄武"]]}, "e1-7": {"type": "table", "title": "中共對臺政策大對照", "head": ["題目", "點數", "記憶口訣"], "rows": [["第一題 傳統內涵特色", "3", "底軟五"], ["第八題 和戰兩手", "2", "武後盾、和包裝"], ["第九題 新胡四點", "4", "主區軟入"], ["第十題 習近平五大方向", "5", "經區文網民"], ["第十三題 統戰戰略之分析", "3", "一中、和兩制、不棄武"]]}, "e1-8": {"type": "table", "title": "中共對臺政策大對照", "head": ["題目", "點數", "記憶口訣"], "rows": [["第一題 傳統內涵特色", "3", "底軟五"], ["第八題 和戰兩手", "2", "武後盾、和包裝"], ["第九題 新胡四點", "4", "主區軟入"], ["第十題 習近平五大方向", "5", "經區文網民"], ["第十三題 統戰戰略之分析", "3", "一中、和兩制、不棄武"]]}, "e1-9": {"type": "table", "title": "中共對臺政策大對照", "head": ["題目", "點數", "記憶口訣"], "rows": [["第一題 傳統內涵特色", "3", "底軟五"], ["第八題 和戰兩手", "2", "武後盾、和包裝"], ["第九題 新胡四點", "4", "主區軟入"], ["第十題 習近平五大方向", "5", "經區文網民"], ["第十三題 統戰戰略之分析", "3", "一中、和兩制、不棄武"]]}, "e1-12": {"type": "table", "title": "中共對臺政策大對照", "head": ["題目", "點數", "記憶口訣"], "rows": [["第一題 傳統內涵特色", "3", "底軟五"], ["第八題 和戰兩手", "2", "武後盾、和包裝"], ["第九題 新胡四點", "4", "主區軟入"], ["第十題 習近平五大方向", "5", "經區文網民"], ["第十三題 統戰戰略之分析", "3", "一中、和兩制、不棄武"]]}, "e1-62": {"type": "grid", "title": "軍種報「誠義勇貞愛信」", "items": [{"e": "🪖", "t": "陸軍", "s": "忠誠報"}, {"e": "⚓", "t": "海軍", "s": "忠義報"}, {"e": "✈️", "t": "空軍", "s": "忠勇報"}, {"e": "🚓", "t": "憲兵", "s": "忠貞報"}, {"e": "🎒", "t": "後備", "s": "忠愛報"}, {"e": "📡", "t": "資通電軍", "s": "忠信報"}]}, "e1-63": {"type": "grid", "title": "軍種報「誠義勇貞愛信」", "items": [{"e": "🪖", "t": "陸軍", "s": "忠誠報"}, {"e": "⚓", "t": "海軍", "s": "忠義報"}, {"e": "✈️", "t": "空軍", "s": "忠勇報"}, {"e": "🚓", "t": "憲兵", "s": "忠貞報"}, {"e": "🎒", "t": "後備", "s": "忠愛報"}, {"e": "📡", "t": "資通電軍", "s": "忠信報"}]}, "e1-64": {"type": "grid", "title": "軍種報「誠義勇貞愛信」", "items": [{"e": "🪖", "t": "陸軍", "s": "忠誠報"}, {"e": "⚓", "t": "海軍", "s": "忠義報"}, {"e": "✈️", "t": "空軍", "s": "忠勇報"}, {"e": "🚓", "t": "憲兵", "s": "忠貞報"}, {"e": "🎒", "t": "後備", "s": "忠愛報"}, {"e": "📡", "t": "資通電軍", "s": "忠信報"}]}, "e1-65": {"type": "grid", "title": "軍種報「誠義勇貞愛信」", "items": [{"e": "🪖", "t": "陸軍", "s": "忠誠報"}, {"e": "⚓", "t": "海軍", "s": "忠義報"}, {"e": "✈️", "t": "空軍", "s": "忠勇報"}, {"e": "🚓", "t": "憲兵", "s": "忠貞報"}, {"e": "🎒", "t": "後備", "s": "忠愛報"}, {"e": "📡", "t": "資通電軍", "s": "忠信報"}]}, "e1-66": {"type": "grid", "title": "軍種報「誠義勇貞愛信」", "items": [{"e": "🪖", "t": "陸軍", "s": "忠誠報"}, {"e": "⚓", "t": "海軍", "s": "忠義報"}, {"e": "✈️", "t": "空軍", "s": "忠勇報"}, {"e": "🚓", "t": "憲兵", "s": "忠貞報"}, {"e": "🎒", "t": "後備", "s": "忠愛報"}, {"e": "📡", "t": "資通電軍", "s": "忠信報"}]}, "e1-67": {"type": "grid", "title": "軍種報「誠義勇貞愛信」", "items": [{"e": "🪖", "t": "陸軍", "s": "忠誠報"}, {"e": "⚓", "t": "海軍", "s": "忠義報"}, {"e": "✈️", "t": "空軍", "s": "忠勇報"}, {"e": "🚓", "t": "憲兵", "s": "忠貞報"}, {"e": "🎒", "t": "後備", "s": "忠愛報"}, {"e": "📡", "t": "資通電軍", "s": "忠信報"}]}, "e1-77": {"type": "table", "title": "⚠️ 新聞稿三題只差一個詞", "head": ["題目", "點數", "口訣"], "rows": [["第十八題 其重點", "5", "主通不說感感"], ["第十九題 其要領", "3（3個「如何」）", "篩材、凸重、強讀"], ["第二十題 常見錯誤種類", "5", "報專特側花"]]}, "e1-78": {"type": "table", "title": "⚠️ 新聞稿三題只差一個詞", "head": ["題目", "點數", "口訣"], "rows": [["第十八題 其重點", "5", "主通不說感感"], ["第十九題 其要領", "3（3個「如何」）", "篩材、凸重、強讀"], ["第二十題 常見錯誤種類", "5", "報專特側花"]]}, "e1-79": {"type": "table", "title": "⚠️ 新聞稿三題只差一個詞", "head": ["題目", "點數", "口訣"], "rows": [["第十八題 其重點", "5", "主通不說感感"], ["第十九題 其要領", "3（3個「如何」）", "篩材、凸重、強讀"], ["第二十題 常見錯誤種類", "5", "報專特側花"]]}, "e1-3": {"type": "table", "title": "統戰四題對照", "head": ["題目", "答案形式", "口訣"], "rows": [["第四題 方法", "1句", "聯次打主"], ["第五題 原則", "4個「…的原則」", "矛聯獨領"], ["第六題 作法", "4組「A與B」", "滲宣分威"], ["第七題 本質", "4個「…性」", "欺鬥極特"]]}, "e1-4": {"type": "table", "title": "統戰四題對照", "head": ["題目", "答案形式", "口訣"], "rows": [["第四題 方法", "1句", "聯次打主"], ["第五題 原則", "4個「…的原則」", "矛聯獨領"], ["第六題 作法", "4組「A與B」", "滲宣分威"], ["第七題 本質", "4個「…性」", "欺鬥極特"]]}, "e1-5": {"type": "table", "title": "統戰四題對照", "head": ["題目", "答案形式", "口訣"], "rows": [["第四題 方法", "1句", "聯次打主"], ["第五題 原則", "4個「…的原則」", "矛聯獨領"], ["第六題 作法", "4組「A與B」", "滲宣分威"], ["第七題 本質", "4個「…性」", "欺鬥極特"]]}, "e1-6": {"type": "table", "title": "統戰四題對照", "head": ["題目", "答案形式", "口訣"], "rows": [["第四題 方法", "1句", "聯次打主"], ["第五題 原則", "4個「…的原則」", "矛聯獨領"], ["第六題 作法", "4組「A與B」", "滲宣分威"], ["第七題 本質", "4個「…性」", "欺鬥極特"]]}};
+const COMIC = {"E": {"e1-1": ["🐺🚧", "🗺️😵", "🚩💥", "📺🕳️", "🧩🧩"], "e1-4": ["😡🤬", "🤝👊", "🧍↔️👥", "🎤🙋🙋"], "e1-5": ["🥷🌿", "📢📜", "✂️👥", "🔪🧧"], "e1-6": ["🎩🐇", "🥊🥊", "👑📣", "🕶️🕵️"], "e1-8": ["🏃💨", "🚧↔️", "🍡🧱", "🚤❤️"], "e1-9": ["🚚💰", "🗺️🧩", "💃🫠", "📑✍️", "☎️👨‍👩‍👧"], "e1-11": ["🔍👀", "🪧🇹🇼", "🎬👹", "💪🏋️"], "e1-13": ["🏳️3️⃣", "🎙️🗣️", "📺⚠️", "🍬🔪"], "e1-22": ["🧳🙇", "🎟️🛒", "🤝👴", "🗺️🧩"], "e1-29": ["🚙🏠", "☎️🔌", "🗣️👂", "📄🛡️"], "e1-34": ["🔥😤", "🫡✨", "⛏️🕳️", "😊⏳"], "e1-36": ["🏛️👔", "🎩👨‍💼", "👵👵", "🎥📸"], "e1-37": ["🍎🏘️", "🏮⛩️", "⚖️😠", "📋🗣️", "🍱🎁"], "e1-40": ["👨‍🏫📚", "✉️🔐", "🔍🪪", "👂📡", "🕵️📁"], "e1-41": ["👶🪖", "🪖🪖", "🏫📖", "🎓👋", "👨‍👩‍👧", "🍚👔"], "e1-43": ["✈️", "🚢", "🛡️🚜", "🔫⚡", "🚀🛏️", "🏝️🌊"], "e1-52": ["🚧⬇️", "⛔", "🧱🛡️", "🗑️📄"], "e1-58": ["🥷🚫", "🔓📡", "💣✂️", "🏛️🤲"], "e1-69": ["👓💡", "🫂🇹🇼", "🧹🏘️", "📰📰", "💊💪", "🧘✨"], "e1-77": ["🚩📌", "🗣️🌊", "🤐☝️", "🎞️🥲", "🫂😭"], "e1-79": ["📺🎙️", "🎤😳", "📌📰", "📸👤", "🌸🌸"]}, "SFX": {"e1-1": ["嗷嗚～", "擠扁！", "嘶啦！", "空空…", "切切切"], "e1-52": ["卡！", "嗶嗶！", "磅！", "嘎嘎嘎"], "e1-6": ["登登～", "碰碰！", "聽令！", "噓…"], "e1-34": ["燒！", "敬禮！", "挖挖挖", "慢慢來～"], "e1-8": ["衝！", "分開！", "軟硬兼施", "登島！"]}};
+const SIM = [{"ids": ["e1-0", "e1-7", "e1-8", "e1-9", "e1-12"], "t": "中共對臺政策 5 題", "note": "看「誰」和「幾點」：傳統＝3點（底軟五）；和戰兩手＝2點（武後盾、和包裝）；新胡四點＝4點（主區軟入）；習近平＝5點（經區文網民）；統戰戰略之分析＝3點（一中、和兩制、不棄武）。"}, {"ids": ["e1-3", "e1-4", "e1-5", "e1-6", "e1-a1"], "t": "統戰：方法／原則／作法／本質", "note": "看答案「形狀」：方法＝1句（聯次打主）；原則＝4個「…的原則」（矛聯獨領）；作法＝4組「A與B」（滲宣分威）；本質＝4個「…性」（欺鬥極特）。應用題第一題＝方法＋原則。"}, {"ids": ["e1-11", "e1-13", "e1-14", "e1-15", "e1-17", "e1-a2"], "t": "反制作為與 4 項細分", "note": "先背第十二題「認落強增」，再各自掛細分：認清→制展加剖；落實→深建；敵情→崛勢危；戰力→小精強巧、軟硬兼修。應用題第二題＝和戰兩手＋認落強增。"}, {"ids": ["e1-18", "e1-19"], "t": "危及臺灣主權：內部 vs 外部", "note": "內臺獨；外美介。"}, {"ids": ["e1-22", "e1-33"], "t": "答案完全相同的兩題", "note": "第三題和第十四題題目不同、答案一字不差：官福軍資。"}, {"ids": ["e1-38", "e1-39", "e1-b2"], "t": "行動福利站申請", "note": "救災＝軍團級函政治作戰局（軍團函政戰局）；演訓、營區開放等＝聯兵旅級具函、前1個月函福利處（旅級函福利處、提前一月）。"}, {"ids": ["e1-25", "e1-26"], "t": "民事：對象 vs 基層如何建立關係", "note": "對象＝4種人（官眷軍民）；基層營連＝一句（照官服眷）。"}, {"ids": ["e1-44", "e1-c1"], "t": "正義專案", "note": "問答題要寫3項；應用題只考「前兩項」＋專案名稱「正義專案」。"}, {"ids": ["e1-45", "e1-46"], "t": "狀況掌握：目的 vs 觀念", "note": "目的＝一長句（早掌握、先知快報）；觀念＝只有兩個詞「先知」「快報」。"}, {"ids": ["e1-50", "e1-53", "e1-54", "e1-c2"], "t": "機密：等級／屬性／複印", "note": "等級4種（絕極機密）；屬性6種（國軍國防雙屬公務）；複印限制（絕禁複、極以下須授權、複本同原）。應用題第二題＝等級＋複印限制。"}, {"ids": ["e1-60", "e1-61", "e1-75"], "t": "一報兩刊＋軍事春秋", "note": "一報青日；兩刊吾家奮鬥；軍事春秋＝雙月刊。"}, {"ids": ["e1-62", "e1-63", "e1-64", "e1-65", "e1-66", "e1-67"], "t": "軍種報 6 題", "note": "依「陸海空憲後資」配「誠義勇貞愛信」。"}, {"ids": ["e1-68", "e1-69", "e1-d1"], "t": "青年日報：使命 vs 主要任務", "note": "使命＝1句（貫政策、負文宣、保國安）；任務＝6點（認利責資志戰）。應用題第一題兩個一起寫。"}, {"ids": ["e1-71", "e1-72", "e1-73", "e1-74", "e1-d2"], "t": "投稿議題三類", "note": "政府政策＝外政經心社；國防事務＝軍演國政；兩岸關係＝統威涉臺。"}, {"ids": ["e1-77", "e1-78", "e1-79"], "t": "新聞稿：重點／要領／常見錯誤種類", "note": "題目只差一個詞！「其重點」＝5點（主通不說感感）；「其要領」＝3個「如何」（篩材、凸重、強讀）；「常見錯誤種類」＝報專特側花。"}];
+const simOf={};SIM.forEach((g,gi)=>g.ids.forEach(id=>(simOf[id]=simOf[id]||[]).push(gi)));
+const CHAPTERS = [
+ {e:1,n:'中共對臺統戰戰略',s:'識破之眼',i:'👁️'},{e:1,n:'民事福利服務暨軍眷服務',s:'暖心光環',i:'💗'},
+ {e:1,n:'保防安全',s:'防諜護盾',i:'🛡️'},{e:1,n:'軍事新聞',s:'文宣號角',i:'📯'}];
+const STAGES=[
+ {lv:1,name:'神秘蛋',c:'#f3e3c3'},{lv:2,name:'新兵寶寶',c:'#a9d39b'},{lv:5,name:'見習小獸',c:'#8cc07f'},
+ {lv:10,name:'政戰戰士',c:'#6fa86a'},{lv:16,name:'精銳隊長',c:'#5c9a8f'},{lv:24,name:'傳說將軍獸',c:'#7a74c9'}];
+const INTV=[0,1,2,4,7,14,30];
+const KEY='zhuanjun-pet-v1';
+const byId={};DATA.forEach(d=>byId[d.id]=d);
+const ORIG={};DATA.forEach(d=>ORIG[d.id]={q:d.q,a:d.a});
+let EDITS={},editsCol=null,myId=null,userNS=null,profCache={};
+function applyEdits(){DATA.forEach(d=>{const e=EDITS[d.id]||(S.localEdits||{})[d.id];if(e&&e.q&&e.a){d.q=e.q;d.a=e.a}else{d.q=ORIG[d.id].q;d.a=ORIG[d.id].a}})}
+
+/* ---------- state ---------- */
+function today(){const d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')}
+function dnum(s){const [y,m,d]=s.split('-').map(Number);return Math.round(Date.UTC(y,m-1,d)/864e5)}
+function dstr(n){const t=new Date(n*864e5);return t.getUTCFullYear()+'-'+String(t.getUTCMonth()+1).padStart(2,'0')+'-'+String(t.getUTCDate()).padStart(2,'0')}
+function fresh(){return {v:1,name:'小政',xp:0,cards:{},days:{},streak:0,lastDay:'',best:0,settings:{newPerDay:10,goal:100,size:15,exams:[1,2,3],strict:false},updatedAt:0}}
+let S=fresh();
+try{const raw=localStorage.getItem(KEY);if(raw)S=Object.assign(fresh(),JSON.parse(raw))}catch(e){}
+let dbRef=null,saveTimer=null,writing=false,dirty=false;
+function save(){
+  S.updatedAt=Date.now();
+  try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}
+  dirty=true;clearTimeout(saveTimer);saveTimer=setTimeout(pushRemote,1500);
+}
+async function pushRemote(){
+  if(!dbRef||writing||!dirty)return;
+  writing=true;dirty=false;
+  try{await dbRef.set(JSON.parse(JSON.stringify(S)))}catch(e){}
+  writing=false;if(dirty)pushRemote();
+}
+(async()=>{try{
+  const user=await claude.use('user');const db=await claude.use('db');userNS=user;
+  if(!user||!db)return;const id=await user.id();if(!id)return;
+  userNS=user;myId=id;
+  editsCol=db.collection('edits');
+  editsCol.onSnapshot(snap=>{EDITS={};snap.docs.forEach(doc=>{EDITS[doc.id]=doc.data()});applyEdits();
+    const ids=[...new Set(Object.values(EDITS).map(e=>e.by).filter(Boolean))];
+    if(ids.length)user.profiles(ids).then(ps=>{profCache=Object.assign(profCache,ps||{});if(tab==='bank')rBankList()}).catch(()=>{});
+    if(tab!=='session'&&tab!=='battle')render();},()=>{});
+  dbRef=db.collection('data/users/'+id).doc('progress');
+  const snap=await dbRef.get();
+  if(snap.exists){const r=snap.data();if(r&&(r.updatedAt||0)>(S.updatedAt||0)){S=Object.assign(fresh(),JSON.parse(JSON.stringify(r)));try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){};render()}
+    else if((S.updatedAt||0)>(r.updatedAt||0)){dirty=true;pushRemote()}}
+  else if(S.updatedAt){dirty=true;pushRemote()}
+}catch(e){}})();
+
+function dayRec(){const t=today();return S.days[t]||(S.days[t]={xp:0,rev:0,perfect:0,newc:0})}
+function card(id){return S.cards[id]}
+function pool(){return DATA.filter(d=>S.settings.exams.includes(d.exam))}
+function mastered(id){const c=card(id);return c&&c.b>=5}
+function learned(id){const c=card(id);return c&&c.b>=3}
+
+/* ---------- level ---------- */
+function lvInfo(xp){let L=1,need=40,acc=0;while(xp>=acc+need){acc+=need;L++;need=40+20*(L-1)}return{L,into:xp-acc,need}}
+function stageOf(L){let s=STAGES[0];STAGES.forEach(x=>{if(L>=x.lv)s=x});return s}
+function addXP(n){
+  const before=lvInfo(S.xp).L;S.xp+=n;const r=dayRec();r.xp+=n;
+  const t=today();
+  if(S.lastDay!==t){S.streak=(S.lastDay&&dnum(t)-dnum(S.lastDay)===1)?S.streak+1:1;S.lastDay=t;S.best=Math.max(S.best||0,S.streak)}
+  floatXP('+'+n+' XP');
+  const after=lvInfo(S.xp).L;
+  if(after>before){const st0=stageOf(before),st1=stageOf(after);pendingLevel={L:after,evo:st0!==st1?st1:null}}
+}
+let pendingLevel=null;
+let fxN=0;function floatXP(t){const el=document.createElement('div');el.className='xpfloat';el.style.top=(38+(fxN++%3)*6)+'%';setTimeout(()=>fxN--,1000);el.textContent=t;document.body.appendChild(el);setTimeout(()=>el.remove(),1000)}
+
+/* ---------- monster ---------- */
+function monsterSVG(L,mood){
+  const st=stageOf(L),c=st.c,si=STAGES.indexOf(st);
+  const sad=mood==='hungry',joy=mood==='happy';
+  if(si===0){
+    const crack=Math.min(1,lvInfo(S.xp).into/40);
+    return `<svg viewBox="0 0 200 200"><ellipse cx="100" cy="178" rx="50" ry="8" fill="#0001"/>
+    <ellipse cx="100" cy="110" rx="58" ry="70" fill="${c}" stroke="#d9c49b" stroke-width="3"/>
+    <circle cx="75" cy="80" r="9" fill="#e9b93a88"/><circle cx="128" cy="130" r="12" fill="#8cc07f88"/><circle cx="118" cy="70" r="6" fill="#e8833a77"/>
+    ${crack>.3?'<path d="M62 105 l12 -8 l10 10 l12 -10 l10 9 l12 -8 l10 8" fill="none" stroke="#8a7650" stroke-width="3"/>':''}
+    ${crack>.6?'<g class="blink"><circle cx="88" cy="118" r="5" fill="#2b2a26"/><circle cx="112" cy="118" r="5" fill="#2b2a26"/></g>':''}</svg>`;
+  }
+  const sc=[0,.78,.88,.96,1,1][si];
+  const eyeY=sad?104:100;
+  const eyes=joy?`<path d="M74 100 q8 -10 16 0 M110 100 q8 -10 16 0" stroke="#2b2a26" stroke-width="5" fill="none" stroke-linecap="round"/>`
+   :`<g class="blink"><ellipse cx="82" cy="${eyeY}" rx="9" ry="${sad?7:11}" fill="#2b2a26"/><ellipse cx="118" cy="${eyeY}" rx="9" ry="${sad?7:11}" fill="#2b2a26"/><circle cx="85" cy="${eyeY-4}" r="3.5" fill="#fff"/><circle cx="121" cy="${eyeY-4}" r="3.5" fill="#fff"/></g>`;
+  const mouth=sad?`<path d="M90 132 q10 -8 20 0" stroke="#2b2a26" stroke-width="4" fill="none" stroke-linecap="round"/>`
+   :`<path d="M88 124 q12 14 24 0" stroke="#2b2a26" stroke-width="4" fill="${joy?'#c9483b':'none'}" stroke-linecap="round"/>`;
+  const ears=si>=2?`<path d="M58 70 L48 30 L80 58Z M142 70 L152 30 L120 58Z" fill="${c}" stroke="#0002" stroke-width="2"/><path d="M60 62 L54 40 L72 56Z M140 62 L146 40 L128 56Z" fill="#f7c9b9"/>`:'';
+  const wings=si>=5?`<path d="M40 110 C0 80 5 40 30 60 C20 80 30 95 45 100Z M160 110 C200 80 195 40 170 60 C180 80 170 95 155 100Z" fill="#c9c3f0" stroke="#7a74c9" stroke-width="2"/>`:'';
+  const helmet=si>=3&&si<5?`<path d="M52 82 Q100 18 148 82 Z" fill="#556b3e"/><rect x="48" y="78" width="104" height="9" rx="4" fill="#3f5230"/><circle cx="100" cy="56" r="7" fill="#e9b93a"/>`:'';
+  const crown=si>=5?`<path d="M66 64 L74 34 L88 54 L100 26 L112 54 L126 34 L134 64Z" fill="#e9b93a" stroke="#b7891f" stroke-width="2"/><circle cx="100" cy="40" r="4" fill="#c9483b"/>`:'';
+  const medal=si>=4?`<path d="M92 150 L100 168 L108 150Z" fill="#c9483b"/><circle cx="100" cy="168" r="8" fill="#e9b93a" stroke="#b7891f" stroke-width="2"/>`:'';
+  const cheeks=`<ellipse cx="66" cy="120" rx="9" ry="6" fill="#f29c8c88"/><ellipse cx="134" cy="120" rx="9" ry="6" fill="#f29c8c88"/>`;
+  const sparkle=joy?`<text x="160" y="50" font-size="22">✨</text><text x="22" y="70" font-size="16">✨</text>`:'';
+  const sweat=sad?`<path d="M146 78 q6 10 0 14 q-6 -4 0 -14Z" fill="#7fb7e0"/>`:'';
+  return `<svg viewBox="0 0 200 200"><ellipse cx="100" cy="182" rx="${52*sc}" ry="8" fill="#0001"/>
+  <g transform="translate(100 110) scale(${sc}) translate(-100 -110)">
+  ${wings}${ears}
+  <path d="M100 52 C150 52 160 92 158 128 C156 162 132 178 100 178 C68 178 44 162 42 128 C40 92 50 52 100 52Z" fill="${c}" stroke="#0002" stroke-width="3"/>
+  <ellipse cx="100" cy="146" rx="34" ry="24" fill="#ffffff55"/>
+  <ellipse cx="70" cy="176" rx="14" ry="7" fill="${c}" stroke="#0002" stroke-width="2"/><ellipse cx="130" cy="176" rx="14" ry="7" fill="${c}" stroke="#0002" stroke-width="2"/>
+  ${eyes}${cheeks}${mouth}${helmet}${crown}${medal}${sweat}</g>${sparkle}</svg>`;
+}
+function mood(){const r=dayRec();return r.xp===0?'hungry':(r.xp>=S.settings.goal?'happy':'ok')}
+const LINES={hungry:['肚子好餓…今天背幾題餵我嘛 🥺','我在等你喔！先複習幾題就好～','一天10分鐘，我就會長大！'],
+ ok:['好吃！再來幾題我就吃飽了 😋','你越背，我越強！','繼續加油，快升級了！'],
+ happy:['今天吃飽飽！你超強 💪','任務達成！明天也要來喔～','我感覺力量湧上來了！']};
+
+/* ---------- auto mnemonic ---------- */
+function items(a){
+  let lines=a.split('\n').map(s=>s.replace(/^(\d+、|[（(][一二三四五六七八九十][）)])/,'').trim()).filter(Boolean);
+  if(lines.length<=1){const one=lines[0]||'';const parts=one.replace(/[。]$/,'').split(/、/);if(parts.length>=3&&parts.every(p=>p.length<=12))lines=parts;else{
+    const m=one.match(/（[一二三四五六七八九十]）/g);if(m&&m.length>=2)lines=one.split(/（[一二三四五六七八九十]）/).filter(Boolean)}}
+  return lines;
+}
+function acrostic(a){
+  const it=items(a);if(it.length<2)return '';
+  return it.map(s=>{s=s.replace(/^[「『（(]+/,'');const m=s.match(/[一-鿿A-Za-z0-9]/);return m?m[0]:''}).join('');
+}
+function hintHTML(d){
+  const it=items(d.a);let h='';
+  h+=`<div>📌 ${it.length>=2?`共 <b>${it.length}</b> 點　`:''}${TIPS[d.id]?`記憶口訣：<b>${esc(TIPS[d.id])}</b>`:`首字：<b>${acrostic(d.a)||norm(d.a,false).slice(0,2)}</b>`}</div>`;
+  return h;
+}
+
+
+/* ---------- diagrams & palace ---------- */
+const ROUTE=[['🚪','大門'],['💂','衛哨亭'],['🏃','集合場'],['📺','中山室'],['🛏️','寢室'],['🍚','餐廳'],['🚿','浴室'],['🎯','靶場'],['🏥','醫務所']];
+function diagramHTML(id){
+  const g=DIAG[id];if(!g)return '';let h='';
+  if(g.type==='flow')h=`<div class="fl ${g.dir==='h'?'h':''}">${g.items.map((x,k)=>(k?`<div class="ar">${g.dir==='h'?'→':'↓'}</div>`:'')+`<div class="nd">${x.e?x.e+' ':''}${esc(x.t)}${x.s?`<small>${esc(x.s)}</small>`:''}</div>`).join('')}</div>`;
+  else if(g.type==='pyramid'){const n=g.items.length;h=`<div class="py">${g.items.map((x,k)=>`<div style="width:${40+60*k/Math.max(1,n-1)}%">${esc(x.t)}${x.s?`<small>${esc(x.s)}</small>`:''}</div>`).join('')}</div>`}
+  else if(g.type==='tree')h=`<div class="tr"><div class="rt">${esc(g.root)}</div>${g.kids.map(k=>`<div class="kd"><b>▸ ${esc(k.t)}</b>${k.sub.map(x=>`<span>${esc(x)}</span>`).join('')}</div>`).join('')}</div>`;
+  else if(g.type==='grid')h=`<div class="gd">${g.items.map(x=>`<div><i>${x.e}</i>${esc(x.t)}<small>${esc(x.s||'')}</small></div>`).join('')}</div>`;
+  else if(g.type==='table')h=`<table class="tb"><tr>${g.head.map(x=>`<th>${esc(x)}</th>`).join('')}</tr>${g.rows.map(r=>`<tr>${r.map((x,k)=>`<td>${k===0?'<b>'+esc(x)+'</b>':esc(x)}</td>`).join('')}</tr>`).join('')}</table>`;
+  else if(g.type==='scale')h=`<div class="sc">${g.bands.slice().reverse().map(b=>`<div><i style="background:${b.c}">${b.r}</i>${esc(b.t)}</div>`).join('')}</div><div class="sub small" style="margin-top:6px">🌡️ ${esc(g.note)}</div>`;
+  else if(g.type==='timeline'){const W=300,x=m=>20+m/180*(W-40);
+    h=`<svg viewBox="0 0 ${W} 150" style="width:100%">${g.rows.map((r,ri)=>{const y=40+ri*60;return `<text x="0" y="${y-16}" font-size="12" font-weight="700" fill="#2b2a26">${r.t}安全狀況</text><line x1="20" y1="${y}" x2="${W-20}" y2="${y}" stroke="#ccc" stroke-width="3"/>`+r.marks.map((m,mi)=>`<circle cx="${x(m.m)}" cy="${y}" r="7" fill="${ri?'#3f6b8f':'#c9483b'}"/><text x="${Math.min(x(m.m),W-60)}" y="${y+22+mi*0}" font-size="11" text-anchor="${m.m>100?'end':'middle'}" fill="#2b2a26">${m.l}</text>`).join('')}).join('')}<text x="20" y="145" font-size="10" fill="#7a7468">0分</text><text x="${W-20}" y="145" font-size="10" text-anchor="end" fill="#7a7468">180分</text></svg><div class="sub small">📺 ${esc(g.note)}</div>`}
+  else if(g.type==='wedge')h=`<svg viewBox="0 0 300 230" style="width:100%">
+    <rect x="0" y="70" width="300" height="16" fill="#8cc07f"/><text x="8" y="66" font-size="11" fill="#4f7d4a">我軍陣地線</text>
+    <path d="M150 20 L235 215 L65 215 Z" fill="#f7dcd8" stroke="#c9483b" stroke-width="2"/>
+    <text x="150" y="150" text-anchor="middle" font-size="12" fill="#c9483b">突入之敵</text>
+    <circle cx="150" cy="22" r="6" fill="#c9483b"/><text x="160" y="18" font-size="13" font-weight="700">① 尖端：阻止</text>
+    <circle cx="125" cy="78" r="6" fill="#4f7d4a"/><circle cx="175" cy="78" r="6" fill="#4f7d4a"/><text x="185" y="104" font-size="13" font-weight="700">② 肩部：固守</text>
+    <text x="150" y="228" text-anchor="middle" font-size="13" font-weight="700">③ 底部：封鎖 🔒</text>
+    <path d="M10 150 L88 150" stroke="#3f6b8f" stroke-width="4" marker-end="url(#ah)"/><path d="M290 150 L212 150" stroke="#3f6b8f" stroke-width="4" marker-end="url(#ah)"/>
+    <text x="4" y="176" font-size="13" font-weight="700" fill="#3f6b8f">④ 腰部：打擊</text>
+    <defs><marker id="ah" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8Z" fill="#3f6b8f"/></marker></defs></svg>`;
+  return `<div class="dg"><h4>📊 圖解｜${esc(g.title)}</h4>${h}</div>`;
+}
+const LOCBG=[
+ // 0 大門
+ `<rect x="150" y="40" width="22" height="130" fill="#d9cdb4"/><rect x="290" y="40" width="22" height="130" fill="#d9cdb4"/><rect x="140" y="30" width="182" height="26" rx="4" fill="#4f7d4a"/><text x="231" y="49" text-anchor="middle" font-size="15" font-weight="900" fill="#fff">營　門</text>`,
+ // 1 衛哨亭
+ `<rect x="220" y="70" width="80" height="100" fill="#efe4cc" stroke="#b9a983" stroke-width="2"/><path d="M210 72 L260 40 L310 72Z" fill="#c9483b"/><path d="M226 66 L240 52 M246 66 L262 46 M268 66 L284 52" stroke="#fff" stroke-width="5"/><rect x="236" y="90" width="48" height="30" fill="#bfe0f2" stroke="#b9a983" stroke-width="2"/>`,
+ // 2 集合場
+ `<line x1="270" y1="20" x2="270" y2="170" stroke="#9a9a9a" stroke-width="5"/><path d="M272 24 L318 36 L272 50Z" fill="#c9483b"/><rect x="0" y="168" width="320" height="10" fill="#e3d3a8"/>`,
+ // 3 中山室
+ `<rect x="190" y="30" width="96" height="62" rx="6" fill="#2b2a26"/><rect x="196" y="36" width="84" height="50" fill="#5d7fa3"/><rect x="150" y="30" width="22" height="120" fill="#f3e3c3" stroke="#c9483b" stroke-width="2"/><rect x="298" y="30" width="22" height="120" fill="#f3e3c3" stroke="#c9483b" stroke-width="2"/><text x="161" y="56" font-size="12" text-anchor="middle" fill="#c9483b" writing-mode="tb">愛國信念</text><text x="309" y="56" font-size="12" text-anchor="middle" fill="#c9483b" writing-mode="tb">國軍使命</text>`,
+ // 4 寢室
+ `<rect x="170" y="60" width="140" height="8" fill="#8a7650"/><rect x="170" y="120" width="140" height="8" fill="#8a7650"/><rect x="170" y="52" width="140" height="10" rx="3" fill="#7fae74"/><rect x="170" y="112" width="140" height="10" rx="3" fill="#7fae74"/><rect x="166" y="40" width="6" height="130" fill="#6b5a3a"/><rect x="306" y="40" width="6" height="130" fill="#6b5a3a"/>`,
+ // 5 餐廳
+ `<rect x="150" y="120" width="170" height="12" rx="4" fill="#b98d5a"/><rect x="160" y="132" width="8" height="40" fill="#8a6a40"/><rect x="302" y="132" width="8" height="40" fill="#8a6a40"/><ellipse cx="190" cy="114" rx="16" ry="7" fill="#fff" stroke="#999"/><ellipse cx="280" cy="114" rx="16" ry="7" fill="#fff" stroke="#999"/>`,
+ // 6 浴室
+ `<g stroke="#cfe3ea" stroke-width="2">${[...Array(8)].map((_,i)=>`<line x1="${150+i*24}" y1="20" x2="${150+i*24}" y2="170"/>`).join('')}${[...Array(7)].map((_,i)=>`<line x1="150" y1="${20+i*24}" x2="320" y2="${20+i*24}"/>`).join('')}</g><path d="M290 20 L290 50 L270 60" stroke="#888" stroke-width="5" fill="none"/><path d="M262 66 l-6 14 M270 66 l0 16 M278 66 l6 14" stroke="#7fb7e0" stroke-width="3"/>`,
+ // 7 靶場
+ `<circle cx="260" cy="90" r="56" fill="#fff" stroke="#2b2a26" stroke-width="3"/><circle cx="260" cy="90" r="38" fill="#c9483b"/><circle cx="260" cy="90" r="22" fill="#fff"/><circle cx="260" cy="90" r="9" fill="#c9483b"/>`,
+ // 8 醫務所
+ `<rect x="200" y="40" width="100" height="100" rx="10" fill="#fff" stroke="#ddd" stroke-width="2"/><rect x="238" y="56" width="24" height="68" fill="#c9483b"/><rect x="216" y="78" width="68" height="24" fill="#c9483b"/>`];
+const SFXPOOL=['咻！','碰！','喔喔！','嘿！','哇！','咚！','叮！','啪！'];
+function keyword(t){const p=t.match(/（([^）]+)）$/);const m=t.match(/「([^」]+)」[^「]*$/);if(m&&m[1].length<2&&p)return p[1];if(m)return m[1];if(p)return p[1];return t.replace(/^(大門口|衛哨亭|衛哨|集合場|中山室|寢室|餐廳|浴室|靶場|醫務所)/,'').slice(0,8)}
+function wrap(t,n){const out=[];for(let i=0;i<t.length&&out.length<2;i+=n)out.push(t.slice(i,i+n));if(t.length>n*2)out[1]=out[1].slice(0,n-1)+'…';return out}
+function miniMon(x,y){const L=lvInfo(S.xp).L,st=stageOf(L),si=STAGES.indexOf(st),c=si===0?STAGES[1].c:st.c;
+  return `<g transform="translate(${x} ${y})"><path d="M0 -40 C30 -40 36 -16 35 6 C34 26 20 34 0 34 C-20 34 -34 26 -35 6 C-36 -16 -30 -40 0 -40Z" fill="${c}" stroke="#2b2a26" stroke-width="3"/>
+   ${si>=2?`<path d="M-24 -30 L-30 -54 L-10 -38Z M24 -30 L30 -54 L10 -38Z" fill="${c}" stroke="#2b2a26" stroke-width="2.5"/>`:''}
+   ${si>=3&&si<5?`<path d="M-28 -22 Q0 -64 28 -22Z" fill="#556b3e" stroke="#2b2a26" stroke-width="2"/>`:''}
+   ${si>=5?`<path d="M-18 -36 L-12 -56 L-4 -42 L0 -60 L4 -42 L12 -56 L18 -36Z" fill="#e9b93a" stroke="#2b2a26" stroke-width="2"/>`:''}
+   <ellipse cx="-11" cy="-6" rx="6" ry="8" fill="#2b2a26"/><ellipse cx="11" cy="-6" rx="6" ry="8" fill="#2b2a26"/><circle cx="-9" cy="-9" r="2.5" fill="#fff"/><circle cx="13" cy="-9" r="2.5" fill="#fff"/>
+   <ellipse cx="0" cy="14" rx="6" ry="7" fill="#7a2f27"/><ellipse cx="-22" cy="6" rx="6" ry="4" fill="#f29c8c"/><ellipse cx="22" cy="6" rx="6" ry="4" fill="#f29c8c"/></g>`}
+function panelSVG(id,k,text,exact){
+  const props=(COMIC.E[id]||[])[k]||'❗';const sfx=((COMIC.SFX[id]||[])[k])||SFXPOOL[(k*3+id.length)%SFXPOOL.length];
+  const ex=strip(exact||''),kw=(ex&&ex.length<=21)?(ex.length<=7?[ex]:ex.length<=14?[ex.slice(0,7),ex.slice(7)]:[ex.slice(0,7),ex.slice(7,14),ex.slice(14)]):wrap(keyword(text),7),bw=Math.max(90,Math.max(...kw.map(l=>l.length))*17+26),bh=kw.length*22+16;
+  const chars=[...props];const fs=chars.length>=3?44:56;
+  return `<svg viewBox="0 0 320 210">
+   <defs><pattern id="ht${k}" width="8" height="8" patternUnits="userSpaceOnUse"><circle cx="4" cy="4" r="1.3" fill="#00000012"/></pattern></defs>
+   <rect width="320" height="210" fill="#fdf8ec"/><rect width="320" height="210" fill="url(#ht${k})"/>
+   ${LOCBG[k%9]}
+   <rect x="0" y="178" width="320" height="32" fill="#e9dfc8"/>
+   <text x="232" y="${chars.length>=3?150:158}" font-size="${fs}" text-anchor="middle">${props}</text>
+   ${miniMon(60,150)}
+   <path d="M${10} ${8} h${bw} a8 8 0 0 1 8 8 v${bh-16} a8 8 0 0 1 -8 8 h-${bw-50} l-14 18 l2 -18 h-${36} a8 8 0 0 1 -8 -8 v-${bh-16} a8 8 0 0 1 8 -8z" fill="#fff" stroke="#2b2a26" stroke-width="2.5"/>
+   ${kw.map((l,i)=>`<text x="${22}" y="${32+i*22}" font-size="17" font-weight="900" fill="#2b2a26">${esc(l)}</text>`).join('')}
+   <text x="306" y="30" font-size="22" font-weight="900" text-anchor="end" fill="#e8833a" stroke="#2b2a26" stroke-width="1" transform="rotate(-8 306 30)">${esc(sfx)}</text>
+   <circle cx="20" cy="194" r="11" fill="#2b2a26"/><text x="20" y="199" font-size="13" font-weight="900" text-anchor="middle" fill="#fff">${k+1}</text>
+   <text x="38" y="199" font-size="13" font-weight="700" fill="#5b4a1a">${ROUTE[k][0]} ${ROUTE[k][1]}</text></svg>`;
+}
+let palText={};
+function rawItems(a){const L=a.split('\n').filter(x=>x.trim());if(L.length>=2)return L;const one=L[0]||'';const p=one.replace(/[。]$/,'').split('、');if(p.length>=3&&p.every(x=>x.length<=12))return p;return L}
+function strip(t){return t.replace(/^(\d+、|[（(][一二三四五六七八九十][）)])/,'').replace(/[。]$/,'')}
+function palaceHTML(id){
+  const p=PALACE[id];if(!p)return '';const d=byId[id];const ex=rawItems(d.a);
+  const head=`<h4>🏰 答案漫畫｜每格一點<a class="tg" onclick="event.stopPropagation();palText['${id}']=!palText['${id}'];this.closest('.pal').outerHTML=palaceHTML('${id}')">${palText[id]?'看漫畫':'只看文字'}</a></h4>`;
+  if(palText[id])return `<div class="pal">${head}<div class="small" style="font-weight:700;margin-bottom:6px">${d.n}：${esc(d.q)}</div>${ex.map((t,k)=>`<div class="stop"><i>${ROUTE[k][0]}</i><span>${esc(t)}</span></div>`).join('')}</div>`;
+  return `<div class="pal">${head}<div class="strip" onclick="event.stopPropagation()"><div class="panel cover"><div class="t">${esc(d.ch)}｜${d.n}</div><div class="qq">${esc(d.q)}</div><div class="n">答案共 ${p.length} 點・往左滑開始 →</div></div>${p.map((t,k)=>`<div class="panel"><div class="qbar">${d.n}：${esc(d.q)}（第 ${k+1}/${p.length} 點）</div>${panelSVG(id,k,t,ex[k])}<div class="cap">${esc(ex[k]||'')}</div></div>`).join('')}</div><div class="swipe">← 左右滑動：封面是題目，後面 ${p.length} 格是答案 →</div></div>`;
+}
+function aidsHTML(d){return simHTML(d)+diagramHTML(d.id)+palaceHTML(d.id)}
+function numSplit(q){const m=q.match(/^[一二三四五六七八九十]+[、，,]\s*/);return m?[m[0],q.slice(m[0].length)]:['',q]}
+function simParts(qs0){const qs=qs0.map(q=>numSplit(q)[1]);let pre=0,suf=0;const m=Math.min(...qs.map(q=>q.length));
+  while(pre<m&&qs.every(q=>q[pre]===qs[0][pre]))pre++;
+  while(suf<m-pre&&qs.every(q=>q[q.length-1-suf]===qs[0][qs[0].length-1-suf]))suf++;
+  return q0=>{const [nm,q]=numSplit(q0);return esc(nm)+esc(q.slice(0,pre))+(q.slice(pre,q.length-suf)?`<mark>${esc(q.slice(pre,q.length-suf))}</mark>`:'')+esc(q.slice(q.length-suf))}}
+function simGroupHTML(gi,cur){const g=SIM[gi];const hl=simParts(g.ids.map(i=>byId[i].q));
+  return `<div class="sim"><h4>⚠️ 相似題：${esc(g.t)}（${g.ids.length}題）</h4><div class="nt">🧠 <b>區別＆記法：</b>${esc(g.note)}</div>
+  ${g.ids.map(i=>{const x=byId[i];return `<div class="it ${i===cur?'me':''}"><div class="sq">${i===cur?'👉 ':''}<span class="sub small">${x.n}　</span>${hl(x.q)}</div><div class="aa">${esc(x.a)}</div></div>`}).join('')}
+  <button class="chip" style="margin-top:6px" onclick="event.stopPropagation();startSession(shuffle(SIM[${gi}].ids),'mc','相似題特訓')">🔤 這組一起練（選擇題）</button></div>`}
+function simHTML(d){return (simOf[d.id]||[]).map(gi=>simGroupHTML(gi,d.id)).join('')}
+function rSim(){
+  const gs=SIM.map((g,gi)=>({g,gi})).filter(x=>x.g.ids.some(i=>S.settings.exams.includes(byId[i].exam)));
+  app.innerHTML=`<div class="top"><button class="x" onclick="tab='study';render()">‹</button><h2 style="margin:0">⚠️ 相似題對照</h2></div>
+  <div class="card small" style="line-height:1.7">題目長得像、答案卻不同，考試最容易寫錯。<mark style="background:#ffd98a">黃底</mark>是題目中「唯一不同的字」，先看清楚差在哪，再用「區別＆記法」分開記。</div>
+  ${gs.map(x=>simGroupHTML(x.gi,null)).join('')}`;
+}
+
+
+/* ---------- compare ---------- */
+function norm(s,strict){
+  if(!strict)s=s.replace(/（[一二三四五六七八九十]）|\([一二三四五六七八九十]\)/g,'').replace(/(^|\n)\s*\d+\s*[、.．]/g,'$1').replace(/[，、。；：「」『』（）()【】！？,.;:'"“”‘’\-－—…·]/g,'');
+  return s.replace(/\s+/g,'');
+}
+function lcs(a,b){
+  const n=a.length,m=b.length,dp=Array.from({length:n+1},()=>new Uint16Array(m+1));
+  for(let i=n-1;i>=0;i--)for(let j=m-1;j>=0;j--)dp[i][j]=a[i]===b[j]?dp[i+1][j+1]+1:Math.max(dp[i+1][j],dp[i][j+1]);
+  const ops=[];let i=0,j=0;
+  while(i<n&&j<m){if(a[i]===b[j]){ops.push(['=',a[i]]);i++;j++}else if(dp[i+1][j]>=dp[i][j+1]){ops.push(['-',a[i]]);i++}else{ops.push(['+',b[j]]);j++}}
+  while(i<n)ops.push(['-',a[i++]]);while(j<m)ops.push(['+',b[j++]]);
+  return{len:dp[0][0],ops};
+}
+function esc(s){return s.replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]))}
+
+/* ---------- tiles ---------- */
+function chunks(a){
+  const out=[];
+  a.split('\n').forEach((line,li)=>{
+    let buf='',parts=[];
+    for(const ch of line){buf+=ch;if('，、。；：'.includes(ch)){parts.push(buf);buf=''}}
+    if(buf)parts.push(buf);
+    const merged=[];parts.forEach(p=>{if(merged.length&&/^(\d+、|（[一二三四五六七八九十]）|答：)$/.test(merged[merged.length-1]))merged[merged.length-1]+=p;else merged.push(p)});
+    merged.forEach((p,k)=>out.push({t:p,nl:li>0&&k===0}));
+  });
+  let res=out;
+  if(res.length<4){const r2=[];res.forEach(o=>{if(o.t.length>4){const n=Math.ceil(o.t.length/4);const sz=Math.ceil(o.t.length/n);for(let k=0;k<o.t.length;k+=sz)r2.push({t:o.t.slice(k,k+sz),nl:o.nl&&k===0})}else r2.push(o)});res=r2}
+  while(res.length>14){const r2=[];for(let k=0;k<res.length;k+=2){if(res[k+1]&&!res[k+1].nl)r2.push({t:res[k].t+res[k+1].t,nl:res[k].nl});else{r2.push(res[k]);if(res[k+1])r2.push(res[k+1])}}if(r2.length===res.length)break;res=r2}
+  return res;
+}
+function shuffle(a){a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
+
+
+/* ---------- true/false & multiple choice ---------- */
+function others(d){const seen=new Set([d.a]);const sib=new Set();(simOf[d.id]||[]).forEach(gi=>SIM[gi].ids.forEach(i=>sib.add(i)));return DATA.filter(x=>{if(!(x.ch===d.ch||sib.has(x.id))||seen.has(x.a))return false;seen.add(x.a);return true})}
+function sibs(d){const s=new Set();(simOf[d.id]||[]).forEach(gi=>SIM[gi].ids.forEach(i=>{if(i!==d.id&&byId[i].a!==d.a)s.add(i)}));return [...s].map(i=>byId[i])}
+function nItems(a){return items(a).length}
+function makeMC(d){
+  const n=nItems(d.a);
+  const sb=shuffle(sibs(d));const pool=sb.concat(shuffle(others(d)).filter(x=>!sb.includes(x)).sort((x,y)=>Math.abs(nItems(x.a)-n)-Math.abs(nItems(y.a)-n)));
+  const opts=[{t:d.a,ok:true}];
+  const mut=mutate(d);if(mut&&Math.random()<.6)opts.push({t:mut,ok:false});
+  for(const x of pool){if(opts.length>=4)break;opts.push({t:x.a,ok:false})}
+  return shuffle(opts);
+}
+function mutate(d){
+  const lines=d.a.split('\n');if(lines.length<2)return null;
+  const mk=s=>(s.match(/^(\d+、|（[一二三四五六七八九十]）)/)||[''])[0];
+  const donors=[];others(d).forEach(x=>x.a.split('\n').forEach(l=>{const c=l.slice(mk(l).length);if(c&&!d.a.includes(c))donors.push(c)}));
+  if(!donors.length)return null;
+  const k=Math.floor(Math.random()*lines.length);
+  lines[k]=mk(lines[k])+donors[Math.floor(Math.random()*donors.length)];
+  return lines.join('\n');
+}
+function makeTF(d){
+  if(Math.random()<.5)return{t:d.a,ok:true};
+  const mut=mutate(d);
+  if(mut&&Math.random()<.6)return{t:mut,ok:false,why:'有一點被換掉了'};
+  const sb=sibs(d);const o=sb.length&&Math.random()<.7?shuffle(sb)[0]:shuffle(others(d))[0];
+  return o?{t:o.a,ok:false,why:'這是別題的答案：「'+o.q+'」'}:{t:d.a,ok:true};
+}
+function pickTF(v){const c=sess.cur;if(c.picked!=null)return;c.picked=v;const right=(v===c.tf.ok);award(right?3:1);grade(right?2:0);render()}
+function pickMC(k){const c=sess.cur;if(c.picked!=null)return;c.picked=k;const right=c.opts[k].ok;award(right?5:1);grade(right?2:0);render()}
+
+/* ---------- session ---------- */
+let tab='home',sess=null,bankChap=0,bankQ='',bankOpen={};
+function buildDaily(){
+  const t=dnum(today()),r=dayRec();
+  const p=pool();
+  const due=p.filter(d=>{const c=card(d.id);return c&&c.d<=t}).sort((a,b)=>card(a.id).d-card(b.id).d||card(a.id).b-card(b.id).b);
+  const newLeft=Math.max(0,S.settings.newPerDay-r.newc);
+  const nw=p.filter(d=>!card(d.id)).slice(0,newLeft);
+  return due.concat(nw).slice(0,S.settings.size).map(d=>d.id);
+}
+function dueCount(){const t=dnum(today());return pool().filter(d=>{const c=card(d.id);return c&&c.d<=t}).length}
+function startSession(ids,mode,title){
+  if(!ids.length){toastModal('今天沒有要複習的題目了 🎉','可以到「練習」選章節自由練習，或在設定提高每日新題數。');return}
+  sess={q:ids.slice(),total:ids.length,done:0,mode,title,cur:null,again:{},xp:0,right:0};
+  tab='session';nextCard();
+}
+function autoMode(id){const c=card(id);const b=c?c.b:0;return b===0?'tf':(b===1?'mc':(b<=3?'order':'write'))}
+function nextCard(){
+  if(!sess.q.length){finishSession();return}
+  const id=sess.q.shift();const m=sess.mode==='auto'?autoMode(id):sess.mode;
+  sess.cur={id,m,picked:null,revealed:false,hint:false,placed:[],used:[],tiles:null,mist:0,result:null,input:''};
+  if(m==='order'){const ch=chunks(byId[id].a);sess.cur.target=ch;sess.cur.tiles=shuffle(ch.map((c,i)=>({...c,i})))}
+  if(m==='tf')sess.cur.tf=makeTF(byId[id]);
+  if(m==='mc')sess.cur.opts=makeMC(byId[id]);
+  render();
+}
+function grade(q){ // q: 0 fail,1 meh,2 good
+  const id=sess.cur.id,r=dayRec(),t=dnum(today());
+  let c=card(id);if(!c){c=S.cards[id]={b:0,d:t,n:0,ok:0};r.newc++}
+  c.n++;r.rev++;
+  if(q===2){c.b=Math.min(6,c.b+1);c.ok++;sess.right++}
+  else if(q===1){c.b=Math.max(1,c.b)}
+  else{c.b=Math.max(0,c.b-2)}
+  c.d=t+(q===0?0:(q===1?1:INTV[c.b]));
+  if(q===0&&!sess.again[id]){sess.again[id]=1;sess.q.push(id)}
+  sess.done++;save();
+}
+function finishSession(){
+  const s=sess;tab='home';sess=null;render();
+  showModal(`<div style="font-size:46px">🍖</div><h2>練習完成！</h2><p>答對 ${s.right} 題・獲得 <b>${s.xp} XP</b></p><p class="sub">今日進度 ${dayRec().xp} / ${S.settings.goal} XP</p><button class="btn pri" onclick="closeModal()">回去看小怪獸</button>`);
+}
+function award(n){addXP(n);sess.xp+=n}
+
+/* ---------- render ---------- */
+const app=document.getElementById('app');
+function render(){
+  document.querySelectorAll('#nav button').forEach(b=>b.classList.toggle('on',b.dataset.t===(tab==='palace'||tab==='sim'?'study':tab)));
+  document.getElementById('nav').classList.toggle('hide',tab==='session'||(tab==='battle'&&(B.phase==='play'||B.phase==='count')));
+  ({home:rHome,study:rStudy,bank:rBank,dex:rDex,set:rSet,session:rSession,palace:rPalace,sim:rSim,battle:rBattle})[tab]();
+  if(pendingLevel&&tab!=='session'&&!(tab==='battle'&&B.phase==='play')){const p=pendingLevel;pendingLevel=null;levelUp(p)}
+}
+function rHome(){
+  const li=lvInfo(S.xp),st=stageOf(li.L),md=mood(),r=dayRec();
+  const p=pool(),mast=p.filter(d=>mastered(d.id)).length,lrn=p.filter(d=>learned(d.id)).length;
+  const line=LINES[md][Math.floor(Math.random()*LINES[md].length)];
+  const due=dueCount(),newLeft=Math.max(0,Math.min(S.settings.newPerDay-r.newc,p.filter(d=>!card(d.id)).length));
+  const ms=[
+    {t:`複習到期題目（剩 ${due} 題）`,d:due===0&&r.rev>0},
+    {t:`學 ${S.settings.newPerDay} 題新題（剩 ${newLeft}）`,d:newLeft===0},
+    {t:'默寫一字不錯 3 題',d:r.perfect>=3,x:`${Math.min(3,r.perfect)}/3`},
+    {t:`今日 XP 達 ${S.settings.goal}`,d:r.xp>=S.settings.goal,x:`${r.xp}/${S.settings.goal}`}];
+  app.innerHTML=`
+  <div class="card">
+    <div class="row" style="justify-content:space-between"><span class="sub">Lv.${li.L}・${st.name}</span><span class="sub">🔥 連續 ${S.streak&&S.lastDay&&dnum(today())-dnum(S.lastDay)<=1?S.streak:0} 天</span></div>
+    <div class="pet ${md==='happy'?'happy':''}" onclick="render()">${monsterSVG(li.L,md)}<div class="bubble">${line}</div><div class="petname">${esc(S.name)}</div></div>
+    <div class="sub small" style="margin:10px 0 4px">經驗值 ${li.into} / ${li.need}（升到 Lv.${li.L+1}）</div>
+    <div class="bar"><i style="width:${li.into/li.need*100}%"></i></div>
+    <div class="sub small" style="margin:10px 0 4px">今日飽足度 ${Math.min(r.xp,S.settings.goal)} / ${S.settings.goal}</div>
+    <div class="bar g"><i style="width:${Math.min(1,r.xp/S.settings.goal)*100}%"></i></div>
+    <div class="stats"><div class="stat"><b>${mast}</b><span>完全熟記</span></div><div class="stat"><b>${lrn}</b><span>已會</span></div><div class="stat"><b>${p.length}</b><span>總題數</span></div></div>
+  </div>
+  <button class="btn pri" style="margin-bottom:12px;padding:16px" onclick="startSession(buildDaily(),'auto','今日任務')">🍖 開始今日任務（${Math.min(S.settings.size,due+newLeft)} 題）</button>
+  <div class="card"><h2>每日任務</h2>${ms.map(m=>`<div class="mission ${m.d?'done':''}"><div class="ck">${m.d?'✓':''}</div><span style="flex:1">${m.t}</span><span class="sub">${m.x||''}</span></div>`).join('')}</div>
+  <div class="card sub small" style="line-height:1.7">💡 題型會跟著熟練度升級：<b>是非題</b>（認得）→ <b>選擇題</b>（分辨陷阱）→ <b>重組</b>（排出順序）→ <b>默寫</b>（一字不錯）。答錯會降回簡單題型；間隔重複會在你快忘記時再考你。</div>`;
+}
+function rStudy(){
+  const opts=CHAPTERS.map((c,i)=>({...c,idx:i})).filter(c=>S.settings.exams.includes(c.e));
+  app.innerHTML=`<div class="card"><h2>🎯 挑戰模式</h2>
+   <button class="btn sec" style="margin-bottom:8px" onclick="startSession(weakIds(),'auto','弱點加強')">🩹 弱點加強（最常錯的題）</button>
+   <button class="btn sec" style="margin-bottom:8px" onclick="startSession(shuffle(pool().filter(d=>card(d.id)).map(d=>d.id)).slice(0,10),'write','默寫衝刺')">✍️ 默寫衝刺（已學過隨機10題）</button>
+   <button class="btn sec" onclick="startSession(shuffle(pool().map(d=>d.id)).slice(0,15),'order','重組挑戰')">🧩 重組挑戰（隨機15題）</button></div>
+   <div class="card" onclick="tab='sim';render()" style="background:#fff4e0;border-color:#f0c27a"><h2>⚠️ 相似題對照（${SIM.length} 組）</h2><div class="small" style="line-height:1.6">長得像、答案不同的題目放在一起比，標出差別和記法，還能整組一起練。<b>›</b></div></div>
+   <div class="card" onclick="tab='palace';render()" style="background:#efe6f7;border-color:#dccbef"><h2>🏰 答案漫畫＆圖解</h2><div class="small" style="line-height:1.6">題目＋原文答案，一格一點，配上圖解。<b>›</b></div></div>
+   <div class="card"><h2>📂 依章節練習</h2><div class="sub small" style="margin-bottom:8px">題型：<span id="mchips"></span></div>
+   ${opts.map(c=>{const ids=DATA.filter(d=>d.ch===c.n).map(d=>d.id);const m=ids.filter(mastered).length,l=ids.filter(learned).length;
+     return `<div class="skill" onclick="startSession(chapIds(${c.idx}),studyMode,'${c.n}')"><div class="ic" style="filter:none;opacity:1">${c.i}</div><div class="bd"><b>${c.n}</b><div class="bar g" style="height:7px;margin-top:6px"><i style="width:${l/ids.length*100}%"></i></div><div class="sub small">已會 ${l}/${ids.length}・熟記 ${m}</div></div><span>›</span></div>`}).join('')}</div>`;
+  const mc=document.getElementById('mchips');
+  [['auto','自動'],['tf','是非'],['mc','選擇'],['flash','翻卡'],['order','重組'],['write','默寫']].forEach(([k,n])=>{const b=document.createElement('button');b.className='chip'+(studyMode===k?' on':'');b.textContent=n;b.onclick=e=>{e.stopPropagation();studyMode=k;rStudy()};mc.appendChild(b)});
+}
+
+let palChap=0;
+function rPalace(){
+  const chs=CHAPTERS.map((c,i)=>({...c,idx:i})).filter(c=>S.settings.exams.includes(c.e));
+  if(!chs.find(c=>c.idx===palChap))palChap=chs[0]?chs[0].idx:0;
+  const qs=DATA.filter(d=>d.ch===CHAPTERS[palChap].n&&(PALACE[d.id]||DIAG[d.id]));
+  app.innerHTML=`<div class="top"><button class="x" onclick="tab='study';render()">‹</button><h2 style="margin:0">🏰 答案漫畫＆圖解</h2></div>
+  <div class="card small" style="line-height:1.8">
+   <b>怎麼用：</b>先看封面的題目，自己想一遍答案，再往左滑一格一格對原文答案。每一點固定放在營區路線的一個地點，考試時沿路回想。<div class="route" style="margin-top:6px">${ROUTE.map(r=>r[0]+' '+r[1]).join(' → ')}</div></div></div>
+  <div>${chs.map(c=>`<button class="chip ${c.idx===palChap?'on':''}" onclick="palChap=${c.idx};rPalace()">${c.i} ${c.n}</button>`).join('')}</div>
+  ${qs.length?qs.map(d=>`<div class="card"><div class="tag">${d.n}</div><div class="q" style="font-size:16px">${esc(d.q)}</div>${aidsHTML(d)}
+    <div class="row" style="margin-top:10px"><button class="chip" onclick="startSession(['${d.id}'],'mc','考我')">🔤 考我選擇</button><button class="chip" onclick="startSession(['${d.id}'],'order','考我')">🧩 重組</button><button class="chip" onclick="startSession(['${d.id}'],'write','考我')">✍️ 默寫</button></div></div>`).join(''):'<div class="card sub">這章的題目多是短答，直接用口訣和默寫最快。</div>'}`;
+}
+
+let studyMode='auto';
+function chapIds(i){const ids=DATA.filter(d=>d.ch===CHAPTERS[i].n).map(d=>d.id);return studyMode==='auto'?ids:shuffle(ids)}
+function weakIds(){return pool().filter(d=>card(d.id)).map(d=>({id:d.id,c:card(d.id)})).filter(x=>x.c.n>x.c.ok||x.c.b<=2).sort((a,b)=>(a.c.b-b.c.b)||((b.c.n-b.c.ok)-(a.c.n-a.c.ok))).slice(0,15).map(x=>x.id)}
+
+function rSession(){
+  const c=sess.cur,d=byId[c.id],pct=sess.done/(sess.done+sess.q.length+1)*100;
+  const mname={tf:'⭕ 是非題',mc:'🔤 選擇題',flash:'🃏 翻卡',order:'🧩 重組',write:'✍️ 默寫'}[c.m];
+  let body='';
+  const after=()=>`<div class="ans" style="font-size:15px"><b>標準答案</b>\n${esc(d.a)}</div>${TIPS[d.id]||items(d.a).length>1?`<div class="hint">${hintHTML(d)}</div>`:''}${aidsHTML(d)}<button class="btn pri" style="margin-top:12px" onclick="nextCard()">下一題 →</button>`;
+  if(c.m==='tf'){
+    const done=c.picked!=null,right=done&&c.picked===c.tf.ok;
+    body=`<div class="sub small" style="margin-top:10px">下面這個答案，一字一句都正確嗎？</div>
+     <div class="ans" style="${done?(c.tf.ok?'background:var(--g2)':'background:var(--r2)'):''}">${esc(c.tf.t)}</div>
+     ${done?`<div class="score">${right?'⭕ 答對了！':'❌ 答錯了'}</div><div class="sub" style="text-align:center">這個答案是<b>${c.tf.ok?'正確':'錯誤'}</b>的${c.tf.ok?'':'：'+esc(c.tf.why)}</div>${after()}`
+     :`<div class="grade" style="grid-template-columns:1fr 1fr"><button class="gg" style="font-size:18px" onclick="pickTF(true)">⭕ 正確</button><button class="gb" style="font-size:18px" onclick="pickTF(false)">❌ 錯誤</button></div>`}`;
+  }else if(c.m==='mc'){
+    const done=c.picked!=null;
+    body=`<div class="sub small" style="margin-top:10px">選出完全正確的答案（小心長得很像的陷阱）</div>
+     ${c.opts.map((o,k)=>`<button class="ans" style="display:block;width:100%;text-align:left;font-size:15px;border:2px solid ${done?(o.ok?'var(--g)':(k===c.picked?'var(--r)':'transparent')):'transparent'};${done&&o.ok?'background:var(--g2)':''}${done&&!o.ok&&k===c.picked?'background:var(--r2)':''}" onclick="pickMC(${k})"><b>${'ABCD'[k]}.</b> ${esc(o.t)}</button>`).join('')}
+     ${done?`<div class="score">${c.opts[c.picked].ok?'🎯 答對了！':'❌ 正確答案是 '+'ABCD'[c.opts.findIndex(o=>o.ok)]}</div>${TIPS[d.id]?`<div class="hint">📌 記憶口訣：<b>${esc(TIPS[d.id])}</b></div>`:''}${aidsHTML(d)}<button class="btn pri" style="margin-top:12px" onclick="nextCard()">下一題 →</button>`:''}`;
+  }else if(c.m==='flash'){
+    body=c.revealed?`<div class="ans">${esc(d.a)}</div>${TIPS[d.id]||items(d.a).length>1?`<div class="hint">${hintHTML(d)}</div>`:''}${aidsHTML(d)}
+      <div class="grade"><button class="gb" onclick="fl(0)">😵 不會</button><button class="gm" onclick="fl(1)">🤔 模糊</button><button class="gg" onclick="fl(2)">😎 會了</button></div>`
+     :`<div class="sub small" style="margin-top:12px">先在心裡（或嘴上）完整說一遍，再翻開對答案。</div>${c.hint?`<div class="hint">${hintHTML(d)}</div>`:''}
+      <div class="row" style="margin-top:12px"><button class="btn ghost" style="flex:1" onclick="sess.cur.hint=true;render()">💡 提示</button><button class="btn pri" style="flex:2" onclick="sess.cur.revealed=true;render()">翻開答案</button></div>`;
+  }else if(c.m==='order'){
+    const placed=c.placed.map(i=>c.target[i]).map(o=>(o.nl?'\n':'')+esc(o.t)).join('');
+    const finished=c.placed.length===c.target.length;
+    body=`<div class="sub small" style="margin-top:8px">依正確順序點選片段（錯了會搖一下）</div>
+     <div class="slots"><span class="ok">${placed}</span>${finished?'':'<span class="sub">▍</span>'}</div>
+     ${finished?`<div class="score">${c.mist===0?'🎯 完美！':c.mist<=2?'👍 錯 '+c.mist+' 次':'💪 錯 '+c.mist+' 次'}</div>${aidsHTML(d)}<button class="btn pri" style="margin-top:10px" onclick="nextCard()">下一題 →</button>`
+     :`<div class="tiles">${c.tiles.map((o,k)=>`<button class="tile ${c.used.includes(k)?'used':''}" id="t${k}" onclick="tap(${k})">${esc(o.t)}</button>`).join('')}</div>
+       ${c.hint?`<div class="hint">${hintHTML(d)}</div>`:`<button class="btn ghost" style="margin-top:12px" onclick="sess.cur.hint=true;render()">💡 提示</button>`}`}`;
+  }else{
+    if(!c.result){
+      body=`<div class="sub small" style="margin-top:8px">${S.settings.strict?'嚴格模式：標點與編號也要對':'比對文字內容（標點、編號不計）'}</div>
+       <textarea id="inp" placeholder="把答案完整寫出來…" oninput="sess.cur.input=this.value">${esc(c.input)}</textarea>
+       ${c.hint?`<div class="hint">${hintHTML(d)}</div>`:''}
+       <div class="row" style="margin-top:10px"><button class="btn ghost" style="flex:1" onclick="sess.cur.hint=true;render()">💡 提示</button><button class="btn ghost" style="flex:1" onclick="giveUp()">🏳️ 看答案</button><button class="btn pri" style="flex:2" onclick="checkWrite()">對答案</button></div>`;
+    }else{
+      const r=c.result;
+      body=`<div class="score">${r.pct===100?'🏆 一字不錯！':r.pct>=85?'👍 '+r.pct+'%':'💪 '+r.pct+'%'}</div>
+       <div class="sub small" style="margin-top:6px"><span style="color:var(--r);font-weight:700;text-decoration:underline">紅色底線</span>＝漏寫或寫錯的字，<span style="color:var(--r);text-decoration:line-through">刪除線</span>＝多寫的字</div>
+       <div class="diff">${r.html}</div>
+       <div class="ans" style="font-size:15px"><b>標準答案</b>\n${esc(d.a)}</div>
+       ${TIPS[d.id]?`<div class="hint">📌 記憶口訣：<b>${esc(TIPS[d.id])}</b></div>`:''}${aidsHTML(d)}
+       <button class="btn pri" style="margin-top:12px" onclick="nextCard()">下一題 →</button>`;
+    }
+  }
+  app.innerHTML=`<div class="top"><button class="x" onclick="quitSess()">✕</button><div class="bar g"><i style="width:${pct}%"></i></div><span class="sub small">${sess.done}/${sess.total}</span></div>
+  <div class="card"><div class="row" style="justify-content:space-between"><span class="modebadge">${mname}</span><span class="tag">${esc(d.ch)}｜${d.n}</span></div>
+  <div class="q">${esc(d.q)}${simOf[d.id]?'<span class="simtag">⚠️ 有相似題</span>':''}</div>${body}</div>
+  <a class="editlink" onclick="openEdit('${d.id}')">✏️ 這題題目或答案有錯？直接更正</a>
+  <div class="row sub small" style="justify-content:center">${esc(S.name)} 正在等你餵食 🍖 本輪 +${sess.xp} XP</div>`;
+  if(c.m==='write'&&!c.result){const t=document.getElementById('inp');if(t&&!c.input)setTimeout(()=>t.focus(),50)}
+}
+function fl(q){award([1,2,4][q]);grade(q);nextCard()}
+function tap(k){
+  const c=sess.cur,o=c.tiles[k];if(c.used.includes(k))return;const exp=c.target[c.placed.length];
+  if(o.t===exp.t){c.placed.push(c.placed.length);c.used.push(k);
+    if(c.placed.length===c.target.length){const q=c.mist===0?2:(c.mist<=2?1:0);award(c.mist===0?10:(c.mist<=2?6:3));grade(q)}
+    render();
+  }else{c.mist++;const el=document.getElementById('t'+k);if(el){el.classList.remove('bad');void el.offsetWidth;el.classList.add('bad')}}
+}
+function checkWrite(){
+  const c=sess.cur,d=byId[c.id],st=S.settings.strict;
+  const A=norm(d.a,st),B=norm(c.input,st);
+  if(!B){return}
+  const {len,ops}=lcs(A,B);
+  const pct=Math.round(len/Math.max(A.length,B.length)*100);
+  const html=ops.map(([o,ch])=>o==='='?esc(ch):o==='-'?`<span class="miss">${esc(ch)}</span>`:`<span class="extra">${esc(ch)}</span>`).join('');
+  c.result={pct,html};
+  const q=pct===100?2:(pct>=85?1:0);
+  if(pct===100)dayRec().perfect++;
+  award(pct===100?20:(pct>=85?10:3));grade(q);render();
+}
+function giveUp(){const c=sess.cur;c.input=c.input||'';const d=byId[c.id];
+  c.result={pct:0,html:`<span class="miss">${esc(norm(d.a,S.settings.strict))}</span>`};award(1);grade(0);render()}
+function quitSess(){const s=sess;if(s.done===0){sess=null;tab='home';render();return}finishSession()}
+
+function rBank(){
+  const chs=CHAPTERS.map((c,i)=>({...c,idx:i})).filter(c=>S.settings.exams.includes(c.e));
+  if(!chs.find(c=>c.idx===bankChap))bankChap=chs[0]?chs[0].idx:0;
+  const q=bankQ.trim();
+  const list=q?pool().filter(d=>(d.q+d.a).includes(q)):DATA.filter(d=>d.ch===CHAPTERS[bankChap].n);
+  app.innerHTML=`<input class="search" placeholder="🔍 搜尋題目或答案關鍵字" value="${esc(bankQ)}" oninput="bankQ=this.value;rBankList()">
+   <div id="bchips" class="${q?'hide':''}">${chs.map(c=>`<button class="chip ${c.idx===bankChap?'on':''}" onclick="bankChap=${c.idx};rBank()">${c.i} ${c.n}</button>`).join('')}</div>
+   <div class="card" id="blist"></div>
+   <div class="sub small" style="text-align:center">● 灰：未學　● 橘：學習中　● 綠：已會　● 金：熟記</div>`;
+  rBankList();
+}
+function rBankList(){
+  const q=bankQ.trim();document.getElementById('bchips').classList.toggle('hide',!!q);
+  const list=q?pool().filter(d=>(d.q+d.a).includes(q)):DATA.filter(d=>d.ch===CHAPTERS[bankChap].n);
+  const col=id=>{const c=card(id);if(!c)return'#ddd';if(c.b>=5)return'#e9b93a';if(c.b>=3)return'#4f7d4a';return'#e8833a'};
+  document.getElementById('blist').innerHTML=(list.length?'':'<div class="sub">找不到符合的題目</div>')+list.map(d=>`<div class="qi" onclick="bankOpen['${d.id}']=!bankOpen['${d.id}'];rBankList()">
+    <div class="qq"><span class="dot" style="background:${col(d.id)}"></span><span><span class="sub small">${q?esc(d.ch)+'｜':''}${d.n}　</span>${esc(d.q)}${simOf[d.id]?'<span class="simtag">⚠️ 相似</span>':''}${editedInfo(d.id)?'<span class="edtag">'+editedInfo(d.id)+'</span>':''}</span></div>
+    ${bankOpen[d.id]?`<div class="aa">${esc(d.a)}</div>${TIPS[d.id]||items(d.a).length>1?`<div class="hint" style="margin-left:18px">${hintHTML(d)}</div>`:''}<div style="margin-left:18px">${aidsHTML(d)}</div>
+    <div class="row" style="margin:8px 0 0 18px"><button class="chip" onclick="event.stopPropagation();startSession(['${d.id}'],'write','單題默寫')">✍️ 默寫這題</button><button class="chip" onclick="event.stopPropagation();startSession(['${d.id}'],'order','單題重組')">🧩 重組這題</button><button class="chip" onclick="event.stopPropagation();openEdit('${d.id}')">✏️ 更正</button></div>`:''}</div>`).join('');
+}
+function rDex(){
+  const li=lvInfo(S.xp);
+  const last7=[...Array(7)].map((_,k)=>{const s=dstr(dnum(today())-6+k);return{s,xp:(S.days[s]||{}).xp||0}});
+  const mx=Math.max(S.settings.goal,...last7.map(x=>x.xp));
+  app.innerHTML=`<div class="card"><h2>📈 最近 7 天</h2><div class="week">${last7.map(x=>`<div><i style="height:${x.xp/mx*80}px"></i>${x.s.slice(5).replace('-','/')}<br><b style="color:var(--ink)">${x.xp}</b></div>`).join('')}</div>
+   <div class="sub small" style="margin-top:8px">總 XP ${S.xp}・最長連續 ${S.best||0} 天</div></div>
+   <div class="card"><h2>🏅 技能（章節已會 ≥ 80% 解鎖）</h2>${CHAPTERS.map(c=>{const ids=DATA.filter(d=>d.ch===c.n).map(d=>d.id);const l=ids.filter(learned).length;const on=l>=Math.ceil(ids.length*.8);
+     return `<div class="skill ${on?'on':''}"><div class="ic">${c.i}</div><div class="bd"><b>${c.s}</b> <span class="sub small">${on?'已解鎖！':''}</span><div class="sub small">${c.n}・已會 ${l}/${ids.length}</div></div></div>`}).join('')}</div>
+   <div class="card"><h2>🥚 進化路線</h2>${STAGES.map(s=>`<div class="skill ${li.L>=s.lv?'on':''}"><div class="ic">${li.L>=s.lv?'✅':'🔒'}</div><div class="bd"><b>${s.name}</b><div class="sub small">Lv.${s.lv} 進化</div></div></div>`).join('')}</div>`;
+}
+function rSet(){
+  const s=S.settings;
+  app.innerHTML=`<div class="card"><h2>⚙️ 設定</h2>
+  <label class="set">你的暱稱（更正、對戰顯示）<input type="text" value="${esc(S.nick||'')}" maxlength="12" onchange="S.nick=this.value;save()"></label>
+  <label class="set">小怪獸名字<input type="text" value="${esc(S.name)}" maxlength="10" onchange="S.name=this.value||'小政';save()"></label>
+    <label class="set">每日新題數<select onchange="S.settings.newPerDay=+this.value;save()">${[5,10,15,20,30].map(n=>`<option ${n===s.newPerDay?'selected':''}>${n}</option>`).join('')}</select></label>
+  <label class="set">每輪題數<select onchange="S.settings.size=+this.value;save()">${[10,15,20,30,50].map(n=>`<option ${n===s.size?'selected':''}>${n}</option>`).join('')}</select></label>
+  <label class="set">每日 XP 目標<select onchange="S.settings.goal=+this.value;save()">${[50,100,150,200,300].map(n=>`<option ${n===s.goal?'selected':''}>${n}</option>`).join('')}</select></label>
+  <label class="set">默寫嚴格模式（標點、編號也要對）<input type="checkbox" ${s.strict?'checked':''} onchange="S.settings.strict=this.checked;save()"></label></div>
+  <div class="card"><h2>💾 備份進度</h2><div class="sub small" style="margin-bottom:8px">進度存在這支手機的瀏覽器裡。換手機或清除瀏覽器資料前，先複製備份碼保存。</div>
+   <button class="btn sec" onclick="copyBackup(this)">複製備份碼</button>
+   <textarea id="imp" style="min-height:70px;margin-top:10px" placeholder="貼上備份碼以還原"></textarea>
+   <button class="btn ghost" style="margin-top:8px" onclick="importBackup()">還原備份</button></div>
+  <div class="card"><h2>🧠 背誦心法</h2><div class="small" style="line-height:1.8">
+   <b>1. 主動回想</b>：先想、再翻，比一直看答案有效好幾倍。<br>
+   <b>2. 間隔重複</b>：會了的題目，隔 1、2、4、7、14、30 天再考，剛好卡在快忘記的時候。<br>
+   <b>3. 分塊＋首字口訣</b>：把 4～7 點的答案壓成一串字（如「孤邊碎空區」）。<br><b>3.5 記憶宮殿＋圖解</b>：文字配畫面（雙重編碼），條列題放進營區路線，順序題看圖。<br>
+   <b>4. 對比易混題</b>：🧠 提示裡的 ⚠️ 標出長得很像、答案卻不同的題。<br>
+   <b>5. 默寫到一字不錯</b>：考試要寫出來，就要練寫出來。</div></div>
+  <button class="btn ghost" style="color:var(--r);margin-bottom:20px" onclick="askReset()">重置所有進度</button>`;
+}
+function togEx(e){const a=S.settings.exams;const i=a.indexOf(e);if(i>=0){if(a.length>1)a.splice(i,1)}else a.push(e);a.sort();save();rSet()}
+function copyBackup(btn){const code=btoa(unescape(encodeURIComponent(JSON.stringify(S))));
+  const done=()=>{btn.textContent='已複製 ✓'};
+  try{navigator.clipboard.writeText(code).then(done,()=>{document.getElementById('imp').value=code;btn.textContent='已放到下方框中，請手動複製'})}catch(e){document.getElementById('imp').value=code}}
+function importBackup(){try{const v=document.getElementById('imp').value.trim();const o=JSON.parse(decodeURIComponent(escape(atob(v))));if(!o.cards)throw 0;S=Object.assign(fresh(),o);save();tab='home';render();toastModal('還原成功 ✅','')}catch(e){toastModal('備份碼無法讀取','請確認有完整貼上。')}}
+function askReset(){showModal(`<h2>確定要重置？</h2><p class="sub">所有進度與小怪獸等級都會歸零，無法復原。</p><div class="row"><button class="btn ghost" onclick="closeModal()">取消</button><button class="btn pri" style="background:var(--r)" onclick="const n=S.name;S=fresh();S.name=n;save();closeModal();tab='home';render()">重置</button></div>`)}
+
+
+/* ---------- shared corrections ---------- */
+function editedInfo(id){const e=EDITS[id];if(e){const nm=e.nick||(profCache[e.by]&&profCache[e.by].name)||'有人';return `✏️ ${esc(nm)} 更正過`}if((S.localEdits||{})[id])return '✏️ 我更正過（只在這台）';return ''}
+function openEdit(id){const d=byId[id];
+  showModal(`<div class="left" style="text-align:left"><h2>✏️ 更正 ${esc(d.ch)}｜${d.n}</h2>
+   <div class="sub small" style="margin-bottom:8px">直接改成正確的內容，按儲存後${editsCol?'<b>所有使用這個網站的人</b>都會立刻看到':'目前沒連上共用資料庫，只會存在這台手機'}。</div>
+   <div class="small"><b>題目</b></div><textarea id="eq">${esc(d.q)}</textarea>
+   <div class="small" style="margin-top:8px"><b>答案</b>（每一點換一行）</div><textarea id="ea" style="min-height:160px">${esc(d.a)}</textarea>
+   ${EDITS[id]||(S.localEdits||{})[id]?`<div class="sub small" style="margin-top:6px">${editedInfo(id)}・原本解答：</div><div class="ans" style="font-size:13px;margin-top:4px">${esc(ORIG[id].a)}</div>`:''}
+   <div class="row" style="margin-top:12px"><button class="btn ghost" onclick="closeModal()">取消</button><button class="btn pri" onclick="saveEdit('${id}')">儲存</button></div>
+   ${EDITS[id]||(S.localEdits||{})[id]?`<button class="btn ghost" style="margin-top:8px;color:var(--r)" onclick="revertEdit('${id}')">還原成原本解答</button>`:''}</div>`);
+}
+async function saveEdit(id){const q=document.getElementById('eq').value.trim(),a=document.getElementById('ea').value.replace(/\n{2,}/g,'\n').trim();
+  if(!q||!a){return}
+  if(editsCol){try{const e={q,a,by:myId||null,nick:myNick().slice(0,12),at:Date.now()};await editsCol.doc(id).set(e);EDITS[id]=e;applyEdits();closeModal();render();toastModal('已更正 ✅','所有人都會看到新的內容。');return}catch(e){}}
+  S.localEdits=S.localEdits||{};S.localEdits[id]={q,a};save();applyEdits();closeModal();render();
+  toastModal('已更正（只存在這台）','目前沒有連上共用資料庫（網路或 Firebase 設定問題）。');
+}
+async function revertEdit(id){if(editsCol&&EDITS[id]){try{await editsCol.doc(id).delete()}catch(e){}}
+  if(S.localEdits&&S.localEdits[id]){delete S.localEdits[id];save()}
+  delete EDITS[id];applyEdits();closeModal();render()}
+
+
+/* ---------- battle ---------- */
+let roomNS=null,roomTried=false;
+const B={phase:'menu',code:'',r:null,unsub:null,gid:null,ids:[],idx:0,score:0,opts:null,picked:null,qStart:0,fin:false,err:'',chap:-1,count:10,bonus:{},cd:0,nick:''};
+function seeded(seed){let a=seed>>>0;return()=>{a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
+function withRng(seed,fn){const r=Math.random;Math.random=seeded(seed);try{return fn()}finally{Math.random=r}}
+async function getRoom(){if(roomTried)return roomNS;roomTried=true;try{roomNS=await claude.use('room')}catch(e){roomNS=null}return roomNS}
+function myNick(){return (S.nick||'').trim()||S.name}
+function myPres(extra){const L=lvInfo(S.xp).L,st=stageOf(L);return Object.assign({nick:myNick().slice(0,12),L,c:STAGES.indexOf(st)===0?STAGES[1].c:st.c},extra||{})}
+async function createRoom(){B.code=String(Math.floor(1000+Math.random()*9000));B.host=true;await enterRoom()}
+async function joinRoom(){const v=(document.getElementById('codein')||{}).value||'';if(!/^\d{4}$/.test(v.trim())){B.err='請輸入 4 位數代碼';rBattle();return}B.code=v.trim();B.host=false;await enterRoom()}
+async function enterRoom(){
+  B.err='';const room=await getRoom();
+  if(!room){B.err='目前沒有連上對戰伺服器（Firebase 還沒設定好或網路不穩），請稍後再試。';rBattle();return}
+  try{B.r=await room.join('pk-'+B.code)}catch(e){B.err='加入失敗（'+(e&&e.code||'錯誤')+'），稍後再試。';rBattle();return}
+  B.phase='lobby';B.gid=null;B.fin=false;
+  B.r.presence(myPres({host:!!B.host,since:Date.now(),gid:null,score:0,n:0,fin:false}));
+  B.unsub=B.r.onPeers(()=>onBattlePeers(),()=>{});
+  rBattle();
+}
+function hostPeer(){if(!B.r)return null;const hs=B.r.peers().filter(p=>p.presence&&p.presence.host);hs.sort((a,b)=>(a.presence.since||0)-(b.presence.since||0));return hs[0]||null}
+function onBattlePeers(){
+  const h=hostPeer();const g=h&&h.presence.game;
+  if(g&&g.gid&&g.gid!==B.gid){startLocalGame(g);return}
+  if(tab==='battle'){if(B.phase==='play'||B.phase==='result')updateBoard();else rBattle()}
+}
+function battlePool(){return DATA.filter(d=>B.chap<0||d.ch===CHAPTERS[B.chap].n).map(d=>d.id)}
+function hostStart(){
+  const seed=Math.floor(Math.random()*1e9);const pool=battlePool();
+  const ids=withRng(seed,()=>shuffle(pool)).slice(0,Math.min(B.count,pool.length));
+  const g={gid:seed.toString(36),ids,seed,title:B.chap<0?'全部章節':CHAPTERS[B.chap].n};
+  B.r.presence(myPres({host:true,since:Date.now(),game:g,gid:null,score:0,n:0,fin:false}));
+  startLocalGame(g);
+}
+function startLocalGame(g){
+  B.gid=g.gid;B.ids=g.ids.filter(id=>byId[id]);B.seed=g.seed;B.title=g.title;B.idx=0;B.score=0;B.fin=false;B.picked=null;B.right=0;
+  B.r.presence(myPres({gid:B.gid,score:0,n:0,fin:false}));
+  B.phase='count';B.cd=3;tab='battle';render();
+  const tick=()=>{B.cd--;if(B.cd<=0){B.phase='play';nextBQ()}else{rBattle();setTimeout(tick,800)}};setTimeout(tick,800);
+}
+function nextBQ(){if(B.idx>=B.ids.length){finishBattle();return}
+  const id=B.ids[B.idx];B.opts=withRng(B.seed+B.idx*7919,()=>makeMC(byId[id]));B.picked=null;B.qStart=Date.now();rBattle()}
+function pickB(k){if(B.picked!=null)return;B.picked=k;const ok=B.opts[k].ok;const t=(Date.now()-B.qStart)/1000;
+  const pts=ok?100+Math.max(0,Math.round(50-t*2.5)):0;B.score+=pts;if(ok){B.right++;addXP(5)}
+  B.lastPts=pts;B.r&&B.r.presence(myPres({gid:B.gid,score:B.score,n:B.idx+1,fin:B.idx+1>=B.ids.length}));
+  rBattle();setTimeout(()=>{B.idx++;nextBQ()},ok?900:1700)}
+function finishBattle(){B.fin=true;B.phase='result';save();rBattle();updateBoard()}
+function players(){if(!B.r)return[];return B.r.peers().filter(p=>p.presence&&p.presence.nick).map(p=>({me:p.isMe&&p.sameTab,host:!!p.presence.host,nick:String(p.presence.nick).slice(0,12),L:p.presence.L|0,c:/^#[0-9a-fA-F]{3,8}$/.test(p.presence.c||'')?p.presence.c:'#8cc07f',ing:p.presence.gid===B.gid&&B.gid,score:p.presence.gid===B.gid?(p.presence.score|0):0,n:p.presence.gid===B.gid?(p.presence.n|0):0,fin:p.presence.gid===B.gid&&!!p.presence.fin}))}
+function boardHTML(){const ps=players().sort((a,b)=>b.score-a.score);const N=B.ids.length||1;
+  return ps.map((p,i)=>`<div class="pl"><div class="av" style="background:${p.c}">${B.gid&&i===0&&p.score>0?'👑':'Lv'+p.L}</div><div style="flex:1"><div class="nm">${esc(p.nick)}${p.me?'（你）':''}${p.host?' 🏠':''}${p.fin?' ✅':''}</div>${B.gid?`<div class="pb"><i style="width:${p.n/N*100}%"></i></div>`:''}</div>${B.gid?`<div class="sc">${p.score}</div>`:''}</div>`).join('')||'<div class="sub">連線中…</div>'}
+function updateBoard(){const el=document.getElementById('board');if(el)el.innerHTML=boardHTML();
+  if(B.phase==='result'){const ps=players().filter(p=>p.ing);const all=ps.length>1&&ps.every(p=>p.fin);const el2=document.getElementById('resmsg');
+    if(el2){if(all){const top=ps.sort((a,b)=>b.score-a.score)[0];const iWin=top&&top.me;el2.innerHTML=iWin?'🏆 你贏了！小怪獸獲得 +30 XP':'全部完成！冠軍是 <b>'+esc(top.nick)+'</b>';if(iWin&&!B.bonus[B.gid]){B.bonus[B.gid]=1;addXP(30);save()}}else el2.textContent='等待其他人作答完成…'}}}
+async function leaveRoom(){try{B.unsub&&B.unsub();B.r&&await B.r.leave()}catch(e){}B.r=null;B.phase='menu';B.gid=null;rBattle()}
+function rBattle(){
+  if(tab!=='battle')return;
+  const chOpts=`<option value="-1">全部章節</option>`+CHAPTERS.map((c,i)=>`<option value="${i}" ${B.chap===i?'selected':''}>${c.n}</option>`).join('');
+  if(B.phase==='menu'){app.innerHTML=`<div class="card"><h2>⚔️ 小怪獸對戰</h2><div class="small" style="line-height:1.7">跟同梯一起搶答！同一組選擇題，<b>答對＋100分</b>，答得越快加分越多（最多＋50）。贏的人小怪獸＋30 XP，每答對一題也＋5 XP。</div></div>
+    <div class="card"><label class="set">你的暱稱<input type="text" maxlength="12" value="${esc(myNick())}" onchange="S.nick=this.value;save()"></label>
+    <label class="set">題目範圍<select onchange="B.chap=+this.value">${chOpts}</select></label>
+    <label class="set">題數<select onchange="B.count=+this.value">${[5,10,15,20].map(n=>`<option ${n===B.count?'selected':''}>${n}</option>`).join('')}</select></label>
+    <button class="btn pri" style="margin-top:10px" onclick="createRoom()">🏠 建立對戰房</button></div>
+    <div class="card"><h2>🔑 加入朋友的房間</h2><input class="codein" id="codein" inputmode="numeric" maxlength="4" placeholder="4位數代碼"><button class="btn sec" style="margin-top:10px" onclick="joinRoom()">加入</button></div>
+    ${B.err?`<div class="card" style="color:var(--r)">${esc(B.err)}</div>`:''}`;return}
+  if(B.phase==='lobby'){const h=hostPeer();const iAmHost=B.host;
+    app.innerHTML=`<div class="top"><button class="x" onclick="leaveRoom()">✕</button><h2 style="margin:0">對戰房</h2></div>
+    <div class="card"><div class="sub small" style="text-align:center">房間代碼（告訴同梯）</div><div class="code">${B.code}</div>
+    <div class="sub small" style="text-align:center;line-height:1.6">朋友打開同一個網站 → ⚔️ 對戰 → 輸入代碼加入</div></div>
+    <div class="card"><h2>玩家</h2><div id="board">${boardHTML()}</div></div>
+    ${iAmHost?`<div class="card"><label class="set">題目範圍<select onchange="B.chap=+this.value">${chOpts}</select></label><label class="set">題數<select onchange="B.count=+this.value">${[5,10,15,20].map(n=>`<option ${n===B.count?'selected':''}>${n}</option>`).join('')}</select></label>
+      <button class="btn pri" style="margin-top:8px" onclick="hostStart()">🚀 開始對戰</button></div>`:`<div class="card sub" style="text-align:center">等待房主開始…${h?'':'（房主還沒連上）'}</div>`}`;return}
+  if(B.phase==='count'){app.innerHTML=`<div class="card" style="text-align:center"><div class="sub">${esc(B.title||'')}・${B.ids.length} 題</div><div class="big">${B.cd}</div><div class="sub">準備搶答！</div></div><div class="card"><div id="board">${boardHTML()}</div></div>`;return}
+  if(B.phase==='play'){const d=byId[B.ids[B.idx]];const done=B.picked!=null;
+    app.innerHTML=`<div class="top"><button class="x" onclick="leaveRoom()">✕</button><div class="bar g"><i style="width:${B.idx/B.ids.length*100}%"></i></div><span class="sub small">${B.idx+1}/${B.ids.length}</span></div>
+    <div class="card"><div class="row" style="justify-content:space-between"><span class="modebadge">⚔️ 搶答</span><span class="tag">${esc(d.ch)}｜${d.n}</span></div><div class="q">${esc(d.q)}</div>
+    ${B.opts.map((o,k)=>`<button class="ans" style="display:block;width:100%;text-align:left;font-size:15px;border:2px solid ${done?(o.ok?'var(--g)':(k===B.picked?'var(--r)':'transparent')):'transparent'};${done&&o.ok?'background:var(--g2)':''}${done&&!o.ok&&k===B.picked?'background:var(--r2)':''}" onclick="pickB(${k})"><b>${'ABCD'[k]}.</b> ${esc(o.t)}</button>`).join('')}
+    ${done?`<div class="score">${B.opts[B.picked].ok?'🎯 +'+B.lastPts:'❌ 0'}</div>`:''}</div>
+    <div class="card"><div class="sub small">即時排名（你 ${B.score} 分）</div><div id="board">${boardHTML()}</div></div>`;return}
+  if(B.phase==='result'){app.innerHTML=`<div class="card" style="text-align:center"><div style="font-size:46px">🏁</div><h2>你完成了！答對 ${B.right}/${B.ids.length}・${B.score} 分</h2><div id="resmsg" class="sub">等待其他人作答完成…</div></div>
+    <div class="card"><h2>排名</h2><div id="board">${boardHTML()}</div></div>
+    ${B.host?`<button class="btn pri" style="margin-bottom:10px" onclick="B.phase='lobby';rBattle()">🔁 再來一局</button>`:`<div class="card sub" style="text-align:center">等房主開下一局，會自動開始</div>`}
+    <button class="btn ghost" onclick="leaveRoom()">離開房間</button>`;updateBoard();return}
+}
+
+/* ---------- modal ---------- */
+function showModal(h){document.getElementById('modalBody').innerHTML=h;document.getElementById('modal').classList.add('on')}
+function closeModal(){document.getElementById('modal').classList.remove('on')}
+function toastModal(t,s){showModal(`<h2>${t}</h2>${s?`<p class="sub">${s}</p>`:''}<button class="btn pri" onclick="closeModal()">好</button>`)}
+function levelUp(p){
+  confetti();
+  showModal(p.evo?`<div class="pet happy">${monsterSVG(p.L,'happy')}</div><h2>✨ 進化了！</h2><p><b>${esc(S.name)}</b> 變成了 <b>${p.evo.name}</b>！</p><button class="btn pri" onclick="closeModal();render()">太棒了！</button>`
+   :`<div style="font-size:50px">⬆️</div><h2>升級！Lv.${p.L}</h2><p>${esc(S.name)} 變得更強了！</p><button class="btn pri" onclick="closeModal()">繼續加油</button>`);
+}
+function confetti(){const cs=['#e9b93a','#4f7d4a','#e8833a','#3f6b8f','#c9483b'];for(let i=0;i<40;i++){const e=document.createElement('div');e.className='confetti';e.style.left=Math.random()*100+'vw';e.style.background=cs[i%5];e.style.animationDelay=Math.random()*.6+'s';document.body.appendChild(e);setTimeout(()=>e.remove(),2600)}}
+
+document.getElementById('nav').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;tab=b.dataset.t;render();window.scrollTo(0,0)});
+document.getElementById('modal').addEventListener('click',e=>{if(e.target.id==='modal')closeModal()});
+applyEdits();
+render();
+</script>
+</body>
+</html>
